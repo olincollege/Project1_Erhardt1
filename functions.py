@@ -33,6 +33,19 @@ def add_selection_age(nasa_astronaut_dataset):
     nasa_astronaut_dataset["Birth Date"] = nasa_astronaut_dataset["Birth Date"].astype(float)
     return nasa_astronaut_dataset
 
+def add_birth_state(nasa_astronaut_dataset):
+    """
+    Creates a new column with the home state of each astronaut.
+    
+    args:
+        nasa_astronaut_dataset: the df being manipulated.
+        
+    return:
+        nasa_astronaut_dataset: the updated df. 
+    """
+    nasa_astronaut_dataset["Birt State"] = nasa_astronaut_dataset["Birth Place"].str[-2:]
+    return nasa_astronaut_dataset
+
 def highest_flight_hours(nasa_astronaut_dataset):
     """
     """
