@@ -6,7 +6,8 @@ import wikipedia
 import kaggle
 from kaggle.api.kaggle_api_extended import KaggleApi
 import itertools
-
+import math
+import numpy as np
 def get_data():
     """
     """
@@ -106,3 +107,46 @@ def average(nasa_astronaut_dataset, column):
     """
     """
     return nasa_astronaut_dataset[column].mean()
+
+
+def plot_astronauts_vs_time(nasa_astronaut_dataset):
+    astronauts_per_year = frequency(nasa_astronaut_dataset, 1)
+    new ={k: v for k, v in sorted(astronauts_per_year.items(),
+                                  key=lambda item: item[0], reverse = False)}
+    years = list(new.keys())
+
+    astronauts = list(new.values())
+
+    years.pop()
+    astronauts.pop()
+    
+    years = list(map(float, years))
+    astronauts = list(map(float, astronauts))
+
+    x_ticks = np.arange(min(years), max(years), 5)
+    plt.xticks(x_ticks)
+    plt.plot(years, astronauts)
+    pass
+
+
+def grad_school_vs_not_grad_school(nasa_astronaut_dataset):
+    """
+    """
+    gradschool = 0
+    not_gradschool = 1
+    grad_or_not = list(nasa_astronaut_dataset.iloc[:,9])
+    for i in grad_or_not:
+        if type(i) == str:
+            gradschool +=1
+            continue
+        not_gradschool += 1
+        
+    labels = "Grad School", "Not Grad School"
+    sizes = [gradschool, not_gradschool]
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
+            shadow=True, startangle=90)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    plt.show()
+
