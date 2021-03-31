@@ -102,7 +102,7 @@ def most_space_walks(nasa_astronaut_dataset):
     df1 = row[["Name", "Space Walks"]]
     return df1
 
-def average(nasa_astronaut_dataset):
+def average(nasa_astronaut_dataset, column):
     """
     """
-    return nasa_astronaut_dataset["Space Flight (hr)"].mean()
+    return nasa_astronaut_dataset[column].mean()
