@@ -7,7 +7,6 @@ import kaggle
 from kaggle.api.kaggle_api_extended import KaggleApi
 import itertools
 import math
-from math import isnan
 import numpy as np
 def get_data():
     """
@@ -78,7 +77,7 @@ def frequency(nasa_astronaut_dataset,column):
     college_list = []
     for i in colleges:
         i = str(i)
-        split_list = i.split("; ")
+        split_list = i.split(";")
         college_list += split_list
     college_frequency = {}
     for college in college_list:
@@ -88,9 +87,7 @@ def frequency(nasa_astronaut_dataset,column):
             college_frequency[college] += 1
     new ={k: v for k, v in sorted(college_frequency.items(),
                                   key=lambda item: item[1], reverse = True)}
-    new.pop("nan", None)
     return new
-
 
 def tops(new, top_number):
     """
@@ -103,21 +100,7 @@ def gender_military(nasa_astronaut_dataset):
     gender_occurrence = nasa_astronaut_dataset.groupby('Gender').count()
     gender_military = gender_occurrence["Military Rank"]
     gender_occurrence_name = gender_occurrence["Name"]
-    gender = ["Female", "Male"]
-    count_row = nasa_astronaut_dataset.shape[0]
-    gender = ["Female", "Male"]
-    count_row = nasa_astronaut_dataset.shape[0]
-    plt.style.use("ggplot")
-    plt.bar(gender, gender_occurrence_name, width=0.8, label='Civilian', color='silver')
-    plt.bar(gender, gender_military, width = 0.8, label = 'Military', color = 'gold')
-    plt.xlabel("Gender")
-    plt.ylabel("Number of Astronauts")
-    plt.title("Gender Distribution of Astronauts")
-
-    plt.legend(loc="upper left")
-    plt.show()
-    pass
-
+    return gender_occurrence, gender_occurrence_name
 
 def most_space_walks(nasa_astronaut_dataset):
     """
@@ -141,6 +124,8 @@ def plot_astronauts_vs_time(nasa_astronaut_dataset):
 
     astronauts = list(new.values())
 
+    years.pop()
+    astronauts.pop()
     
     years = list(map(float, years))
     astronauts = list(map(float, astronauts))
@@ -172,22 +157,3 @@ def grad_school_vs_not_grad_school(nasa_astronaut_dataset):
 
     plt.show()
 
-def average_age_vs_group(nasa_astronaut_dataset):
-    average_age = {}
-    for i in range(19):
-        grouper = nasa_astronaut_dataset[nasa_astronaut_dataset.Group == i]
-        
-        average_age[i] = average(grouper, "Selection Age")
-        
-    average_age.pop(0, None)
-    
-    group = list(average_age.keys())
-    
-    age = list(average_age.values())
-    
-    x_ticks = np.arange(min(group), max(group), 1)
-    plt.xticks(x_ticks)
-    plt.scatter(group, age)
-    
-    pass
-        
