@@ -62,6 +62,13 @@ def filter_by_year(nasa_astronaut_dataset, year_min, year_max):
     above = below[below.Year > year_min]
     return above
 
+def filter_by_group(nasa_astronaut_dataset, group_min, group_max):
+    """
+    """
+    below = nasa_astronaut_dataset[nasa_astronaut_dataset.Group < group_max]
+    above = below[below.Group > group_min]
+    return above
+
 def frequency(nasa_astronaut_dataset,column):
     """
     """
