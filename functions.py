@@ -207,4 +207,33 @@ def most_common_state(nasa_astronaut_dataset):
     plt.title("Most Common Astronaut Home States")
 
     plt.show()
+    
+def female_astronauts_decade(nasa_astronaut_dataset):
+    """
+    """
+    counter = 1
+    start = 1949
+    end = 1960
+    frequency_per_decade = []
+
+    while counter <= 6:
+        decade = filter_by_year(nasa_astronaut_dataset, start, end)
+        gender_frequency = frequency(decade, 6)
+        values = list(gender_frequency.values())
+        if len(values) == 2:
+            frequency_per_decade.append(values[1])
+        else:
+            frequency_per_decade.append(0)
+        start += 10
+        end += 10
+        counter += 1
+    
+    decade = [1950, 1960, 1970, 1980, 1990, 2000]
+    plt.step(decade, frequency_per_decade, color = 'blue')
+    plt.xlabel('Decade')
+    plt.ylabel('Number of Female Astronauts Selected')
+    plt.title('Female Astronauts Selected Per Decade')
+
+    plt.show()
+    
         
