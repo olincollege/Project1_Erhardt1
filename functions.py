@@ -199,4 +199,21 @@ def average_age_vs_group(nasa_astronaut_dataset):
     plt.scatter(group, age)
     
     pass
+
+def most_common_state(nasa_astronaut_dataset):
+    """
+    """
+    frequent_state = frequency(nasa_astronaut_dataset, 19)
+    top_ten_state = list(frequent_state)[:10]
+    all_frequency = list(frequent_state.values())
+    top_ten_frequency = all_frequency[:10]
+    top_ten = dict(list(frequent_state.items())[0: 10]) 
+
+    plt.style.use("ggplot")
+    plt.bar(top_ten_state, top_ten_frequency, width=0.8, color='pink')
+    plt.xlabel("State")
+    plt.ylabel("Number of Astronauts")
+    plt.title("Most Common Astronaut Home States")
+
+    plt.show()
         
