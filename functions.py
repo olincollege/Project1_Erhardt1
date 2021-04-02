@@ -9,6 +9,8 @@ import itertools
 import math
 from math import isnan
 import numpy as np
+import plotly.graph_objects as go
+
 def get_data():
     """
     """
@@ -216,4 +218,39 @@ def most_common_state(nasa_astronaut_dataset):
     plt.title("Most Common Astronaut Home States")
 
     plt.show()
+
+    pass
+
+def violin_plot(nasa_astronaut_dataset):
+
+  
+    # Creating 3 empty lists
+    for i in range(19):
+        str(i) = []
         
+    pass
+    
+"""
+    # Filling the lists with random value
+    for z in range
+
+    for i in range(100):
+        n = randint(1, 100)
+        l2.append(n)
+
+    for i in range(100):
+        n = randint(1, 100)
+        l3.append(n)
+
+    random_collection = [l1, l2, l3]
+
+    # Create a figure instance
+    fig = plt.figure()
+
+    # Create an axes instance
+    ax = fig.gca()
+
+    # Create the violinplot
+    violinplot = ax.violinplot(random_collection)
+    plt.show()
+    """
