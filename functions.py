@@ -57,6 +57,15 @@ def highest_flight_hours(nasa_astronaut_dataset):
 
     return (f"{astronaut} has the most flight hours with a total of {hours} hours.")
 
+def most_space_walks(nasa_astronaut_dataset):
+    """
+    """
+    row = nasa_astronaut_dataset["Space Walks (hr)"].idxmax()
+    astronaut = nasa_astronaut_dataset["Name"][row]
+    hours = nasa_astronaut_dataset["Space Walks (hr)"][row]
+
+    return (f"{astronaut} has the most hours outside a vehicle in space with {hours} hours.")
+
 def filter_by_year(nasa_astronaut_dataset, year_min, year_max):
     """
     """
