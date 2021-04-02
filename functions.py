@@ -9,6 +9,8 @@ import itertools
 import math
 from math import isnan
 import numpy as np
+import plotly.graph_objects as go
+
 def get_data():
     """
     """
@@ -56,6 +58,15 @@ def highest_flight_hours(nasa_astronaut_dataset):
     hours = nasa_astronaut_dataset["Space Flight (hr)"][row]
 
     return (f"{astronaut} has the most flight hours with a total of {hours} hours.")
+
+def most_space_walks(nasa_astronaut_dataset):
+    """
+    """
+    row = nasa_astronaut_dataset["Space Walks (hr)"].idxmax()
+    astronaut = nasa_astronaut_dataset["Name"][row]
+    hours = nasa_astronaut_dataset["Space Walks (hr)"][row]
+
+    return (f"{astronaut} has the most hours outside a vehicle in space with {hours} hours.")
 
 def filter_by_year(nasa_astronaut_dataset, year_min, year_max):
     """
@@ -207,33 +218,39 @@ def most_common_state(nasa_astronaut_dataset):
     plt.title("Most Common Astronaut Home States")
 
     plt.show()
-    
-def female_astronauts_decade(nasa_astronaut_dataset):
-    """
-    """
-    counter = 1
-    start = 1949
-    end = 1960
-    frequency_per_decade = []
 
-    while counter <= 6:
-        decade = filter_by_year(nasa_astronaut_dataset, start, end)
-        gender_frequency = frequency(decade, 6)
-        values = list(gender_frequency.values())
-        if len(values) == 2:
-            frequency_per_decade.append(values[1])
-        else:
-            frequency_per_decade.append(0)
-        start += 10
-        end += 10
-        counter += 1
-    
-    decade = [1950, 1960, 1970, 1980, 1990, 2000]
-    plt.step(decade, frequency_per_decade, color = 'blue')
-    plt.xlabel('Decade')
-    plt.ylabel('Number of Female Astronauts Selected')
-    plt.title('Female Astronauts Selected Per Decade')
+    pass
 
-    plt.show()
-    
+def violin_plot(nasa_astronaut_dataset):
+
+  
+    # Creating 3 empty lists
+    for i in range(19):
+        str(i) = []
         
+    pass
+    
+"""
+    # Filling the lists with random value
+    for z in range
+
+    for i in range(100):
+        n = randint(1, 100)
+        l2.append(n)
+
+    for i in range(100):
+        n = randint(1, 100)
+        l3.append(n)
+
+    random_collection = [l1, l2, l3]
+
+    # Create a figure instance
+    fig = plt.figure()
+
+    # Create an axes instance
+    ax = fig.gca()
+
+    # Create the violinplot
+    violinplot = ax.violinplot(random_collection)
+    plt.show()
+    """
