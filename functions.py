@@ -260,6 +260,7 @@ def female_astronauts_decade(nasa_astronaut_dataset):
 
 def military_college_over_time(nasa_astronaut_dataset):
     values = []
+    military_experience = []
     for i in range(23):
         grouper = nasa_astronaut_dataset[nasa_astronaut_dataset.Group == i]
         
@@ -281,15 +282,12 @@ def military_college_over_time(nasa_astronaut_dataset):
             values.append(military_prep / (military_prep + non)* 100)
             continue
         values.append(np.nan)
-    
-    year = range(23)
-    plt.scatter(year, values)
-    plt.ylim(0,110)
+    group = range(23)
+    plt.scatter(group,values)
     plt.xlabel('Group Number')
-    plt.ylabel('% From a Military College(pct.)')
-    plt.title('Percentage of Astronauts from a Military College')
-
-    plt.show()
+    plt.ylabel('% From Military College')
+    plt.title('Military Education in Austronauts over Time')
+    pass
 
 
 def grad_school_over_time(nasa_astronaut_dataset):
