@@ -182,17 +182,16 @@ def grad_school_vs_not_grad_school(nasa_astronaut_dataset):
         
 
 def average_age_vs_group(nasa_astronaut_dataset):
-    average_age = {}
+    ages = []
     for i in range(19):
         grouper = nasa_astronaut_dataset[nasa_astronaut_dataset.Group == i]
         
-        average_age[i] = average(grouper, "Selection Age")
-        
-    average_age.pop(0, None)
-    
-    group = list(average_age.keys())
-    
-    age = list(average_age.values())
+        average_age.append((nasa_astronaut_dataset["Selection Age"].idxmin()),
+                           nasa_astronaut_dataset["Selection Age"].mean()
+                           nasa_astronaut_dataset["Selection Age"].idxmax())
+        groups = range(19)
+    for temp in zip(*ages)
+        plot(days, array(temp))
     
     x_ticks = np.arange(min(group), max(group), 1)
     plt.xticks(x_ticks)

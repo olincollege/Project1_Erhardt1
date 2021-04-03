@@ -10,6 +10,7 @@ import math
 from math import isnan
 import numpy as np
 import plotly.graph_objects as go
+from pylab import plot, title, xlabel, ylabel, savefig, legend, array
 
 def get_data():
     """
@@ -170,7 +171,7 @@ def grad_school_vs_not_grad_school(nasa_astronaut_dataset):
     """
     """
     gradschool = 0
-    not_gradschool = 1
+    not_gradschool = 0
     grad_or_not = list(nasa_astronaut_dataset.iloc[:,9])
     for i in grad_or_not:
         if type(i) == str:
@@ -181,25 +182,27 @@ def grad_school_vs_not_grad_school(nasa_astronaut_dataset):
     return [gradschool, not_gradschool]
         
 
-def average_age_vs_group(nasa_astronaut_dataset):
-    average_age = {}
+def age_vs_group(nasa_astronaut_dataset):
+    
+    values = []
     for i in range(19):
         grouper = nasa_astronaut_dataset[nasa_astronaut_dataset.Group == i]
         
-        average_age[i] = average(grouper, "Selection Age")
+        youngest = (grouper["Selection Age"]).min()
+        mean = (grouper["Selection Age"]).mean()
+        oldest = (grouper["Selection Age"]).max()
         
-    average_age.pop(0, None)
+        values.append((youngest, mean, oldest))
+    groups = array(list(range(19)))
+   
+    for temp in zip(*values):
+        plot(groups, array(temp))
     
-    group = list(average_age.keys())
+    title('Age Distribution of Astronaut Groups')
+    xlabel('Group Number')
+    ylabel('Age (yrs)')
+    legend(['min', 'avg', 'max'], loc='upper right')
     
-    age = list(average_age.values())
-    
-    x_ticks = np.arange(min(group), max(group), 1)
-    plt.xticks(x_ticks)
-    plt.plot(group, age)
-    plt.xlabel("Astronaut Group #")
-    plt.ylabel("Average Age of Astronuat (Yr.)")
-    plt.title("Average Age of Astronuats over the Years")
     pass
 
 def most_common_state(nasa_astronaut_dataset):
@@ -221,6 +224,20 @@ def most_common_state(nasa_astronaut_dataset):
 
     pass
 
+def military_college_over_time(nasa_astronaut_dataset):
+    values = []
+    for i in range(19):
+        dict = frequency(nasa_astronaut_dataset, 7)
+        military = 0
+        not_gradschool = 0
+        for i in college_list:
+            if type(i) == str:
+                gradschool +=1
+                continue
+            not_gradschool += 1
+
+        return [gradschool, not_gradschool]
+    
 
 def grad_school_over_time(nasa_astronaut_dataset):
     
