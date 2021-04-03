@@ -29,7 +29,6 @@ def change_dates(nasa_astronaut_dataset):
     nasa_astronaut_dataset["Birth Date"] = nasa_astronaut_dataset["Birth Date"].astype(float)
     nasa_astronaut_dataset["Selection Age"] = (nasa_astronaut_dataset["Year"]
                                                - nasa_astronaut_dataset["Birth Date"])
-    nasa_astronaut_dataset["State"] = nasa_astronaut_dataset["Birth Place"].str[-2:]
     
     return nasa_astronaut_dataset
 
@@ -139,15 +138,6 @@ def gender_military(nasa_astronaut_dataset):
     plt.legend(loc="upper left")
     plt.show()
     pass
-
-
-def most_space_walks(nasa_astronaut_dataset):
-    """
-    """
-    row = nasa_astronaut_dataset.nlargest(3, "Space Walks")
-    row.sort_values(["Space Walks"], ascending=True)
-    df1 = row[["Name", "Space Walks"]]
-    return df1
 
 def average(nasa_astronaut_dataset, column):
     """

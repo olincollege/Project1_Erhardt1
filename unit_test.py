@@ -4,15 +4,26 @@ Test library functions to find and identify protein-coding genes in DNA.
 from collections import Counter
 import pytest
 
-from gene_finder import (
-    get_complement,
-    get_reverse_complement,
-    rest_of_orf,
-    find_all_orfs_one_frame,
-    find_all_orfs,
-    find_all_orfs_both_strands,
-    find_longest_orf,
-    encode_amino_acids,
+from functions import (
+    get_data,
+    change_dates,
+    add_selection_age,
+    find_all_birth_state,
+    add_birth_state,
+    highest,
+    filter_by_year,
+    filter_by_group,
+    frequency,
+    tops,
+    engineer,
+    gender_military,
+    most_space_walks,
+    average,
+    grad_school_vs_not_grad_school,
+    average_age_vs_group,
+    most_common_state,
+    grad_school_over_time,
+    first_v_last
 )
 
 

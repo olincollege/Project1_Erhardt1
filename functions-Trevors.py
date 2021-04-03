@@ -29,12 +29,14 @@ def change_dates(nasa_astronaut_dataset):
     nasa_astronaut_dataset["Birth Date"] = nasa_astronaut_dataset["Birth Date"].astype(float)
     nasa_astronaut_dataset["Selection Age"] = (nasa_astronaut_dataset["Year"]
                                                - nasa_astronaut_dataset["Birth Date"])
+    
     return nasa_astronaut_dataset
 
 def add_selection_age(nasa_astronaut_dataset):
     """
     """
     nasa_astronaut_dataset["Birth Date"] = nasa_astronaut_dataset["Birth Date"].astype(float)
+    nasa_astronaut_dataset = nasa_astronaut_dataset.rename({"Birth Date": "Birth Year"}, axis=1, inplace = True)
     return nasa_astronaut_dataset
 
 def add_birth_state(nasa_astronaut_dataset):
@@ -137,15 +139,6 @@ def gender_military(nasa_astronaut_dataset):
     plt.show()
     pass
 
-
-def most_space_walks(nasa_astronaut_dataset):
-    """
-    """
-    row = nasa_astronaut_dataset.nlargest(3, "Space Walks")
-    row.sort_values(["Space Walks"], ascending=True)
-    df1 = row[["Name", "Space Walks"]]
-    return df1
-
 def average(nasa_astronaut_dataset, column):
     """
     """
@@ -167,6 +160,9 @@ def plot_astronauts_vs_time(nasa_astronaut_dataset):
     x_ticks = np.arange(min(years), max(years), 5)
     plt.xticks(x_ticks)
     plt.plot(years,astronauts)
+    plt.xlabel("Year")
+    plt.ylabel("Number of Astronauts")
+    plt.title("Number of NASA Astronauts over the Years")
     pass
 
 
@@ -201,7 +197,9 @@ def average_age_vs_group(nasa_astronaut_dataset):
     x_ticks = np.arange(min(group), max(group), 1)
     plt.xticks(x_ticks)
     plt.plot(group, age)
-    
+    plt.xlabel("Astronaut Group #")
+    plt.ylabel("Average Age of Astronuat (Yr.)")
+    plt.title("Average Age of Astronuats over the Years")
     pass
 
 def most_common_state(nasa_astronaut_dataset):
@@ -250,6 +248,7 @@ def grad_school_over_time(nasa_astronaut_dataset):
     axs[1, 1].pie(intehnine, labels=labels, autopct='%1.1f%%')
     axs[1, 1].set_title('90s and 2000s')
     
+    fig.suptitle('Astronaut Post-Grad Trends through the Decades', fontsize=16)
 
     # Hide x labels and tick labels for top plots and y ticks for right plots.
     for ax in axs.flat:
