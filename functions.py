@@ -280,10 +280,11 @@ def military_college_over_time(nasa_astronaut_dataset):
         if (military_prep + non) > 0:
             values.append(military_prep / (military_prep + non)* 100)
             continue
-        values.append(0)
+        values.append(np.nan)
+    
     year = range(23)
     plt.scatter(year, values)
-    plt.ylim(5,110)
+    plt.ylim(0,110)
     plt.xlabel('Group Number')
     plt.ylabel('% From a Military College(pct.)')
     plt.title('Percentage of Astronauts from a Military College')
