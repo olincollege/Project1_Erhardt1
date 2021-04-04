@@ -20,6 +20,23 @@ def get_image(url):
 
 def get_data():
     """
+    Uses Kaggle API to download astronaut dataset, zipfile to unzip
+    the dataset, and then loads it into variable nasa_astronaut_dataset
+    using Pandas.
+
+    Note that the Kaggle Dataset was published by NASA as the "Astronaut Fact
+    Book" (April 2013 edition) and provides educational /military backgrounds
+    for astronauts from 1959-2013. In some cells are blank, indicating special
+    circumstances. A missing military rank/branch indicates the person was a
+    civilian, a missing death date/mission means the person has not died yet,
+    and a blank year/group indicates someone who was a payload specialist, or
+    someone who did not undergo formal astronaut selectrion/training and were
+    not designated NASA astronauts. They were nomiated by a non-US
+    space agency or a paylad sponsor, typically from the research community.
+
+    Returns:
+        nasa_astronaut_dataset: A pandas dataframe containing information
+        about NASA astronauts.
     """
     api = KaggleApi()
     api.authenticate()
@@ -31,6 +48,15 @@ def get_data():
 
 def change_dates(nasa_astronaut_dataset):
     """
+    Takes NASA astronaut dataframe adds each astronauts selection age to a column
+    based on their birth date and selection year.
+
+    Args:
+        nasa_astronaut_dataset:Pandas Dataframe with background information on NASA
+        astronauts.
+        
+    Returns:
+        nasa_astronaut_dataset: Pandas Dataframe with added "Selection Age" column.
     """
     nasa_astronaut_dataset['Birth Date'] = nasa_astronaut_dataset['Birth Date'].str[-4:]
     nasa_astronaut_dataset["Birth Date"] = nasa_astronaut_dataset["Birth Date"].astype(float)
@@ -50,17 +76,32 @@ def add_birth_state(nasa_astronaut_dataset):
     """
     Creates a new column with the home state of each astronaut.
     
-    args:
-        nasa_astronaut_dataset: the df being manipulated.
+    Args:
+        nasa_astronaut_dataset: Pandas dataframe containing a column
+        with the birth place of each astronaut.
         
-    return:
-        nasa_astronaut_dataset: the updated df. 
+    Returns
+        nasa_astronaut_dataset: A revised Pandas dataframe with a
+        column containing the birth state initials instead of the
+        birth place.
     """
     nasa_astronaut_dataset["Birt State"] = nasa_astronaut_dataset["Birth Place"].str[-2:]
     return nasa_astronaut_dataset
 
 def highest(nasa_astronaut_dataset, column):
     """
+    Shows which astronaut has the highest value in a column.
+
+    Args:
+        nasa_astronaut_dataset: A Pandas dataframe containing information on
+        NASA astronauts.
+        
+        column: a string representing the name of the Pandas column
+        to find the max value of.
+
+    Returns:
+        An F-string saying which astronaut has the highest value in the
+        column and what the highest value is.
     """
     row = nasa_astronaut_dataset[column].idxmax()
     astronaut = nasa_astronaut_dataset["Name"][row]
@@ -71,6 +112,23 @@ def highest(nasa_astronaut_dataset, column):
 
 def filter_by_year(nasa_astronaut_dataset, year_min, year_max):
     """
+    Filters nasa_astronaut dataset by an input time frame.
+
+    Excludes people not listed in an official astronaut group/year ex. a
+    payload specialist in any filter because it is based on the "Year"
+    column of the NASA astronaut dataset.
+
+    Args:
+        nasa_astronaut_dataset: A Pandas dataframe containing information on
+        NASA astronauts.
+
+        year_min: An integar representing the year cutoff from below.
+
+        year_max: An integar representing the year cutoff from above.
+
+    Returns:
+        above: A filtered Pandas dataframe with only astronauts within the
+        year window.
     """
     below = nasa_astronaut_dataset[nasa_astronaut_dataset.Year <= year_max]
     above = below[below.Year >= year_min]
@@ -78,6 +136,24 @@ def filter_by_year(nasa_astronaut_dataset, year_min, year_max):
 
 def filter_by_group(nasa_astronaut_dataset, group_min, group_max):
     """
+    Filters nasa_astronaut dataset by an input selection group frame.
+
+    Excludes people not listed in an official astronaut group ex. a
+    payload specialist in any filter because it is based on the "Group"
+    column of the NASA astronaut dataset.
+
+    Args:
+        nasa_astronaut_dataset: A Pandas dataframe containing information on
+        NASA astronauts.
+
+        group_min: An integar representing the year cutoff from below.
+
+        group_max: An integar representing the year cutoff from above.
+
+    Returns:
+        above: A filtered Pandas datafram with only astronauts within the
+        group window.
+    
     """
     below = nasa_astronaut_dataset[nasa_astronaut_dataset.Group <= group_max]
     above = below[below.Group >= group_min]
@@ -85,6 +161,17 @@ def filter_by_group(nasa_astronaut_dataset, group_min, group_max):
 
 def frequency(nasa_astronaut_dataset,column):
     """
+    Sorts occurences of cells in a column from most common to least common
+    and how many time each element occurs.
+
+    When used on columns with blank cells, blank cells are excluded.
+
+    Args:
+        nasa_astronaut_dataset: A Pandas dataframe containing information on
+        NASA astronauts.
+
+        column: A string representing 
+        
     """
     colleges = nasa_astronaut_dataset.iloc[:,column]
     college_list = []
@@ -169,7 +256,6 @@ def plot_astronauts_vs_time(nasa_astronaut_dataset):
     plt.xlabel("Year")
     plt.ylabel("Number of Astronauts")
     plt.title("Number of NASA Astronauts over the Years")
-    pass
 
 
 def grad_school_vs_not_grad_school(nasa_astronaut_dataset):
@@ -208,7 +294,7 @@ def age_vs_group(nasa_astronaut_dataset):
     ylabel('Age (yrs)')
     legend(['min', 'avg', 'max'], loc='upper right')
     
-    pass
+
 
 def most_common_state(nasa_astronaut_dataset):
     """
@@ -227,7 +313,6 @@ def most_common_state(nasa_astronaut_dataset):
 
     plt.show()
 
-    pass
     
 def female_astronauts_decade(nasa_astronaut_dataset):
     """
@@ -287,7 +372,17 @@ def military_college_over_time(nasa_astronaut_dataset):
     plt.xlabel('Group Number')
     plt.ylabel('% From Military College')
     plt.title('Military Education in Austronauts over Time')
-    pass
+    
+def top_college_over_time(nasa_astronaut_dataset):
+    values = []
+    for i in range(23):
+        grouper = nasa_astronaut_dataset[nasa_astronaut_dataset.Group == i]
+        frequency_of_colleges = frequency(grouper, 7)
+        keys = list(frequency_of_colleges.keys())
+        if len(keys) > 0:
+            values.append(keys[0])
+        
+    return values
 
 
 def grad_school_over_time(nasa_astronaut_dataset):
@@ -359,4 +454,3 @@ def first_v_last(nasa_astronaut_dataset):
 
     plt.legend(loc="upper left")
     plt.show()
-    pass
