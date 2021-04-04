@@ -298,21 +298,31 @@ def age_vs_group(nasa_astronaut_dataset):
 
 def most_common_state(nasa_astronaut_dataset):
     """
+    Note that teh graph throws out people not from the USA
     """
+    most_comon_states = {}
     frequent_state = frequency(nasa_astronaut_dataset, 19)
-    top_ten_state = list(frequent_state)[:10]
-    all_frequency = list(frequent_state.values())
-    top_ten_frequency = all_frequency[:10]
-    top_ten = dict(list(frequent_state.items())[0: 10]) 
+    for key in frequent_state:
+        if key.isupper():
+            most_comon_states[key] = frequent_state[key]
+            
+    most_comon_states_keys =list( most_comon_states.keys() )
+    most_comon_numbers =list( most_comon_states.values() )
 
-    plt.style.use("ggplot")
-    plt.bar(top_ten_state, top_ten_frequency, width=0.8, color='pink')
-    plt.xlabel("State")
-    plt.ylabel("Number of Astronauts")
-    plt.title("Most Common Astronaut Home States")
-
-    plt.show()
-
+    state_df = pandas.DataFrame(list(zip(most_comon_states_keys, most_comon_numbers)),
+               columns =['state', 'value'])
+    
+    import plotly.express as px  # Be sure to import express
+    fig = px.choropleth(state_df,  # Input Pandas DataFrame
+                        locations="state",  # DataFrame column with locations
+                        color="value",  # DataFrame column with color values
+                        hover_name="state", # DataFrame column hover info
+                        locationmode = 'USA-states') # Set to plot as US States
+    fig.update_layout(
+        title_text = 'Most Popular Astronaut Home States', # Create a Title
+        geo_scope='usa',  # Plot only the USA instead of globe
+    )
+    fig.show()  # Output the plot to the screen
     
 def female_astronauts_decade(nasa_astronaut_dataset):
     """
