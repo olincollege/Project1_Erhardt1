@@ -53,7 +53,7 @@ def change_dates(nasa_astronaut_dataset):
     nasa_astronaut_dataset["Birth Date"] = nasa_astronaut_dataset["Birth Date"].astype(float)
     nasa_astronaut_dataset["Selection Age"] = (nasa_astronaut_dataset["Year"]
                                                - nasa_astronaut_dataset["Birth Date"])
-    
+
     return nasa_astronaut_dataset
 
 def add_selection_age(nasa_astronaut_dataset):
@@ -78,27 +78,6 @@ def add_birth_state(nasa_astronaut_dataset):
     """
     nasa_astronaut_dataset["Birt State"] = nasa_astronaut_dataset["Birth Place"].str[-2:]
     return nasa_astronaut_dataset
-
-def highest(nasa_astronaut_dataset, column):
-    """
-    Shows which astronaut has the highest value in a column.
-
-    Args:
-        nasa_astronaut_dataset: A pandas dataframe containing information
-        from the 2013 NASA Astronaut Factbook.
-        
-        column: a string representing the name of the Pandas column
-        to find the max value of.
-
-    Returns:
-        An F-string saying which astronaut has the highest value in the
-        column and what the highest value is.
-    """
-    row = nasa_astronaut_dataset[column].idxmax()
-    astronaut = nasa_astronaut_dataset["Name"][row]
-    hours = nasa_astronaut_dataset[column][row]
-
-    return (f"{astronaut} has the most {column} with a total of {hours} hours.")
 
 
 def filter_by_year(nasa_astronaut_dataset, year_min, year_max):
@@ -243,7 +222,6 @@ def average(nasa_astronaut_dataset, column):
     """
     return nasa_astronaut_dataset[column].mean()
 
-
 def plot_astronauts_vs_time(nasa_astronaut_dataset):
     """
     Plots the number of NASA astronauts going into space over the years.
@@ -364,7 +342,7 @@ def most_common_state(nasa_astronaut_dataset):
         geo_scope='usa',  # Plot only the USA instead of globe
     )
     fig.show()  # Output the plot to the screen
-    
+
 def female_astronauts_decade(nasa_astronaut_dataset):
     """
     Plots NASA astronaut groups and what percentage of each were women.
@@ -518,6 +496,11 @@ def gender_military(nasa_astronaut_dataset, gender, title):
     Args:
         nasa_astronaut_dataset: A pandas dataframe containing information
         from the 2013 NASA Astronaut Factbook.
+
+        gender: A list of strings representing the genders to count for and
+        in what order.
+
+        title: A string representing the title of the plot.
 
     """
     gender_occurrence = nasa_astronaut_dataset.groupby('Gender').count()
