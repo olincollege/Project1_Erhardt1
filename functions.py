@@ -167,6 +167,20 @@ def frequency(nasa_astronaut_dataset,column):
     new.pop("nan", None)
     return new
 
+def college_bar(nasa_astronaut_dataset, column):
+    plt.rcdefaults()
+    fig, ax = plt.subplots()
+    new = frequency(nasa_astronaut_dataset, column)
+    toppers = tops(new, 25)
+    colleges = list(toppers.keys())
+    numbers = list(toppers.values())
+
+    ax.barh(colleges, numbers, align='center', height=.8)
+    ax.invert_yaxis()  # labels read top-to-bottom
+    ax.set_xlabel('Number of Majors')
+    ax.set_title('How fast do you want to go today?')
+    
+    plt.show()
 
 def tops(new, top_number):
     """
