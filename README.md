@@ -15,6 +15,7 @@ To run all of the functions you must have:
 
 ##Sources
 Bennett, Jay. “How the 'Right Stuff' to Be an Astronaut Has Changed over the Years.” Science, National Geographic, 10 Feb. 2021, www.nationalgeographic.com/science/article/how-the-right-stuff-to-be-an-astronaut-changed-over-the-years. 
+
 Kovacs, Gregory TA, and Mark Shadden. "Analysis of age as a factor in NASA astronaut selection and career landmarks." PloS one 12.7 (2017): e0181381.
 
 NASA Astronauts, 1959-Present, Kaggle, 2017, www.kaggle.com/nasa/astronaut-yearbook. 
