@@ -1,4 +1,4 @@
-# SofDes_Midterm_Erhardt1: "The Right Stuff"
+# SofDes_Midterm_Erhardt1: The Right Stuff
 What is the right stuff? The right stuff is a term to represent the qualities possessed by NASA astronauts that make them deemed fit for the job. For our project, we wanted to look at how this concept of the right stuff has evolved over the past sixty years. We accomplished this through a detailed analysis of various astronaut characteristics. We focused most heavily on education, military involvement, and gender. The full report can be found in computationalessay.ipynb.
 
 *note* make a function obtain.py and put functions to obtain data in there.
