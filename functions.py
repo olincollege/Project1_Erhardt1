@@ -58,6 +58,13 @@ def change_dates(nasa_astronaut_dataset):
 
 def add_selection_age(nasa_astronaut_dataset):
     """
+    Adds a selection age column to the dataset. 
+    
+    Args:
+        nasa_astronaut_dataset: Pandas dataframe.
+    
+    Returns:
+        nasa_astronaut_datatset: the updated Pandas dataframe with the new column. 
     """
     nasa_astronaut_dataset["Birth Date"] = nasa_astronaut_dataset["Birth Date"].astype(float)
     nasa_astronaut_dataset = nasa_astronaut_dataset.rename({"Birth Date": "Birth Year"}, axis=1, inplace = True)
@@ -116,9 +123,9 @@ def filter_by_group(nasa_astronaut_dataset, group_min, group_max):
         nasa_astronaut_dataset: A pandas dataframe containing information
         from the 2013 NASA Astronaut Factbook.
 
-        group_min: An integar representing the year cutoff from below.
+        group_min: An integar representing the group cutoff.
 
-        group_max: An integar representing the year cutoff from above.
+        group_max: An integar representing the group cutoff.
 
     Returns:
         above: A filtered Pandas datafram with only astronauts within the
@@ -168,6 +175,9 @@ def frequency(nasa_astronaut_dataset,column):
     return new
 
 def college_bar(nasa_astronaut_dataset, column):
+    """
+    
+    """
     plt.rcdefaults()
     fig, ax = plt.subplots()
     new = frequency(nasa_astronaut_dataset, column)
@@ -391,6 +401,55 @@ def female_astronauts_decade(nasa_astronaut_dataset):
     plt.title('Female Astronauts Selected Per Decade')
 
     plt.show()
+    
+def female_per_year(nasa_astronaut_dataset):
+    """
+    Find the total number of female astronauts per selection group.
+    
+    Args:
+        nasa_astronaut_dataset: pandas dataset. 
+    
+    Returns:
+        female_per_year: a list of the number of females per selection year.
+    """
+    counter = 1
+    female_per_year = []
+
+    while counter <= 20:
+        new_set = filter_by_group(nasa_astronaut_dataset, counter, counter)
+        frequency_dict = frequency(new_set, 6)
+        if 'Female' in frequency_dict:
+            num_females = frequency_dict.get('Female')
+            female_per_year.append(num_females)
+        else:
+            female_per_year.append(0)
+        counter += 1
+    
+    return female_per_year
+
+def astronauts_per_group(nasa_astronaut_dataset):
+    """
+    Creates a list of the number of astronauts per selection group.
+    
+    Args:
+        nasa_astronauts_dataset: a pandas dataframe.
+        
+    Returns:
+        astronauts_per_group: a list of the number of astronauts per selection group. 
+    """
+    counter = 1
+    astronauts_per_group = []
+
+    while counter <= 20:
+        new_set = filter_by_group(nasa_astronaut_dataset, counter, counter)
+        frequency_dict = frequency(new_set, 6)
+        values = frequency_dict.values() 
+        total = sum(values)
+        astronauts_per_group.append(total)
+        counter += 1
+        
+    return astronauts_per_group
+
 
 def military_college_over_time(nasa_astronaut_dataset):
     """
@@ -548,3 +607,33 @@ def first_v_last(nasa_astronaut_dataset):
     gender_military(first, ["Male"], "Gender Distribution of Astronauts in First Astronaut Class")
     
     gender_military(last, ["Female", "Male"], "Gender Distribution of Astronauts in Last Astronaut Class")
+    
+def female_and_total(nasa_astronaut_dataset):
+    """
+    Creates a line plot with the total amount of astronauts selected per group and the total number
+    of females per group. 
+    
+    Args: 
+        nasa_astronaut_dataset: a pandas dataset.
+        
+    Returns: 
+        A plot of astronauts selected per group alongside female astronauts selected per group.
+    """
+    females = female_per_year(nasa_astronaut_dataset)
+    total_per_year = astronauts_per_group(nasa_astronaut_dataset)
+
+
+    group = []
+    for i in range(20):
+         group.append(i+1)
+    
+    plt.plot(group, total_per_year, color = 'purple', label = 'Total Astronauts')
+    plt.fill_between(group, total_per_year, color = 'purple')
+    plt.plot(group, females, color = 'pink', label = 'Female Astronauts')
+    plt.fill_between(group, females, color = 'pink')
+    plt.xticks(np.arange(min(group), max(group)+1, 1.0))
+    plt.xlabel('Selection Groups')
+    plt.ylabel('Number of Astronauts')
+    plt.title('Number of astronauts per Selection Group and Number of Females per Group')
+    plt.legend(loc="upper left", prop={'size': 8.5})
+    plt.show()
