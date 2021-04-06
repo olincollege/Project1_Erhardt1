@@ -13,7 +13,8 @@ To run all of the functions you must have:
 2. Download the zipfile module to unzip the data.
 3. Download the matplotlib.puplot, pandas, itertools, math, and numpy modules. These are used to create the visualizations.
 
-##Sources
+##Sources:
+
 Bennett, Jay. “How the 'Right Stuff' to Be an Astronaut Has Changed over the Years.” Science, National Geographic, 10 Feb. 2021, www.nationalgeographic.com/science/article/how-the-right-stuff-to-be-an-astronaut-changed-over-the-years. 
 
 Kovacs, Gregory TA, and Mark Shadden. "Analysis of age as a factor in NASA astronaut selection and career landmarks." PloS one 12.7 (2017): e0181381.
