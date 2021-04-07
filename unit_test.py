@@ -29,7 +29,7 @@ from functions import (
 
 @pytest.mark.parametrize("password,passes_check", [
     # Check that common passwords are rejected.
-    (1, False),
+    (1, ),
     ("qwerty", False),
     ("password", False),
     # Check that passwords *containing* common passwords are fine.

@@ -1,6 +1,8 @@
-import kaggle
-from kaggle.api.kaggle_api_extended import KaggleApi
+"""
+Import tools for obtaining data.
+"""
 import zipfile
+from kaggle.api import KaggleApi
 import pandas
 
 def get_data():
