@@ -1,89 +1,36 @@
+"""
+Import visualization tools.
+"""
+
+import itertools
 import matplotlib.pyplot as plt
 import pandas
-import requests
-import zipfile
-import kaggle
-from kaggle.api.kaggle_api_extended import KaggleApi
-import itertools
-import math
 import numpy as np
-from pylab import plot, title, xlabel, ylabel, savefig, legend, array
+from pylab import plot, title, xlabel, ylabel, legend, array
+import plotly.express as px  # Be sure to import express
 
-def get_data():
-    """
-    Uses Kaggle API to download astronaut dataset, zipfile to unzip
-    the dataset, and then loads it into variable nasa_astronaut_dataset
-    using Pandas.
-
-    Note that the Kaggle Dataset was published by NASA as the "Astronaut Fact
-    Book" (April 2013 edition) and provides educational /military backgrounds
-    for astronauts from 1959-2013. In some cells are blank, indicating special
-    circumstances. A missing military rank/branch indicates the person was a
-    civilian, a missing death date/mission means the person has not died yet,
-    and a blank year/group indicates someone who was a payload specialist, or
-    someone who did not undergo formal astronaut selectrion/training and were
-    not designated NASA astronauts. They were nomiated by a non-US
-    space agency or a paylad sponsor, typically from the research community.
-
-    Returns:
-        nasa_astronaut_dataset: A pandas dataframe containing information
-        about NASA astronauts.
-    """
-    api = KaggleApi()
-    api.authenticate()
-    api.dataset_download_files('nasa/astronaut-yearbook')
-    with zipfile.ZipFile("astronaut-yearbook.zip", 'r') as zip_ref:
-        zip_ref.extractall()
-    nasa_astronaut_dataset = pandas.read_csv("astronauts.csv")
-    return nasa_astronaut_dataset
 
 def change_dates(nasa_astronaut_dataset):
     """
-    Takes NASA astronaut dataframe adds each astronauts selection age to a column
-    based on their birth date and selection year.
+    Takes NASA astronaut dataframe adds each astronauts selection age to a
+    column based on their birth date and selection year.
 
     Args:
         nasa_astronaut_dataset: A pandas dataframe containing information
         from the 2013 NASA Astronaut Factbook.
-        
+
     Returns:
-        nasa_astronaut_dataset: Pandas Dataframe with added "Selection Age" column.
+        nasa_astronaut_dataset: Pandas Dataframe with added "Selection Age"
+        column
     """
-    nasa_astronaut_dataset['Birth Date'] = nasa_astronaut_dataset['Birth Date'].str[-4:]
-    nasa_astronaut_dataset["Birth Date"] = nasa_astronaut_dataset["Birth Date"].astype(float)
-    nasa_astronaut_dataset["Selection Age"] = (nasa_astronaut_dataset["Year"]
-                                               - nasa_astronaut_dataset["Birth Date"])
+    nasa_astronaut_dataset['Birth Date'] = (
+        nasa_astronaut_dataset['Birth Date'].str[-4:])
+    nasa_astronaut_dataset["Birth Date"] = (
+        nasa_astronaut_dataset["Birth Date"].astype(float))
+    nasa_astronaut_dataset["Selection Age"] = (
+        nasa_astronaut_dataset["Year"]
+        - nasa_astronaut_dataset["Birth Date"])
 
-    return nasa_astronaut_dataset
-
-def add_selection_age(nasa_astronaut_dataset):
-    """
-    Adds a selection age column to the dataset. 
-    
-    Args:
-        nasa_astronaut_dataset: Pandas dataframe.
-    
-    Returns:
-        nasa_astronaut_datatset: the updated Pandas dataframe with the new column. 
-    """
-    nasa_astronaut_dataset["Birth Date"] = nasa_astronaut_dataset["Birth Date"].astype(float)
-    nasa_astronaut_dataset = nasa_astronaut_dataset.rename({"Birth Date": "Birth Year"}, axis=1, inplace = True)
-    return nasa_astronaut_dataset
-
-def add_birth_state(nasa_astronaut_dataset):
-    """
-    Creates a new column with the home state of each astronaut.
-    
-    Args:
-        nasa_astronaut_dataset: A pandas dataframe containing information
-        from the 2013 NASA Astronaut Factbook.
-        
-    Returns
-        nasa_astronaut_dataset: A revised Pandas dataframe with a
-        column containing the birth state initials instead of the
-        birth place.
-    """
-    nasa_astronaut_dataset["Birt State"] = nasa_astronaut_dataset["Birth Place"].str[-2:]
     return nasa_astronaut_dataset
 
 
@@ -111,6 +58,7 @@ def filter_by_year(nasa_astronaut_dataset, year_min, year_max):
     above = below[below.Year >= year_min]
     return above
 
+
 def filter_by_group(nasa_astronaut_dataset, group_min, group_max):
     """
     Filters nasa_astronaut dataset by an input selection group frame.
@@ -130,13 +78,14 @@ def filter_by_group(nasa_astronaut_dataset, group_min, group_max):
     Returns:
         above: A filtered Pandas datafram with only astronauts within the
         group window.
-    
+
     """
     below = nasa_astronaut_dataset[nasa_astronaut_dataset.Group <= group_max]
     above = below[below.Group >= group_min]
     return above
 
-def frequency(nasa_astronaut_dataset,column):
+
+def frequency(nasa_astronaut_dataset, column):
     """
     Sorts occurences of cells in a column from most common to least common
     and how many time each element occurs.
@@ -155,9 +104,9 @@ def frequency(nasa_astronaut_dataset,column):
         new: A dictionary representing the most common elements ordered
         most frequent elements and least common elements and how many
         times they occur in the column.
-        
+
     """
-    colleges = nasa_astronaut_dataset.iloc[:,column]
+    colleges = nasa_astronaut_dataset.iloc[:, column]
     college_list = []
     for i in colleges:
         i = str(i)
@@ -169,28 +118,39 @@ def frequency(nasa_astronaut_dataset,column):
             college_frequency[college] = 1
         else:
             college_frequency[college] += 1
-    new ={k: v for k, v in sorted(college_frequency.items(),
-                                  key=lambda item: item[1], reverse = True)}
+ #   new = {k: v for k, v in sorted(college_frequency.items(),
+           #                        key=lambda item: item[1], reverse=True)}
+    new = dict(sorted(college_frequency.items(), key=lambda item: item[1],
+                      reverse=True))
     new.pop("nan", None)
     return new
 
+
 def college_bar(nasa_astronaut_dataset, column):
     """
-    
+    Creates horizonat bar graph of top 25 most common cells in a column.
+
+    Args:
+        nasa_astronaut_dataset: A pandas dataframe containing information
+        from the 2013 NASA Astronaut Factbook.
+
+        column: An integar representing what column to count with the
+        frequency function.
     """
     plt.rcdefaults()
-    fig, ax = plt.subplots()
+    _, axis = plt.subplots()
     new = frequency(nasa_astronaut_dataset, column)
     toppers = tops(new, 25)
     colleges = list(toppers.keys())
     numbers = list(toppers.values())
 
-    ax.barh(colleges, numbers, align='center', height=.8)
-    ax.invert_yaxis()  # labels read top-to-bottom
-    ax.set_xlabel('Number of Astronauts per Major')
-    ax.set_title('Most Common Astronaut Majors')
-    
+    axis.barh(colleges, numbers, align='center', height=.8)
+    axis.invert_yaxis()  # labels read top-to-bottom
+    axis.set_xlabel('Number of Astronauts per Major')
+    axis.set_title('Most Common Astronaut Majors')
+
     plt.show()
+
 
 def tops(new, top_number):
     """
@@ -206,6 +166,7 @@ def tops(new, top_number):
     """
     return dict(itertools.islice(new.items(), top_number))
 
+
 def engineer(nasa_astronaut_dataset):
     """
     Says how many many NASA astronauts had some kind of engineering
@@ -220,31 +181,17 @@ def engineer(nasa_astronaut_dataset):
 
     majors = new.keys()
 
-    engineer = 0
+    engineer_count = 0
     non = 0
     for major in majors:
         if "Engineering" in major or "engineering" in major:
-            engineer += 1
+            engineer_count += 1
             continue
-        non +=1
+        non += 1
     total = engineer + non
     print(f"{engineer / total * 100} % of Astronauts majored"
           " in some kind of Engineering")
 
-def average(nasa_astronaut_dataset, column):
-    """
-    Returns the average of a column in a daframe.
-
-    Args:
-        nasa_astronaut_dataset: A pandas dataframe containing information
-        from the 2013 NASA Astronaut Factbook.
-
-        column: An integar representing the column to take the average of.
-
-    Returns:
-        A float representing the mean of the column.
-    """
-    return nasa_astronaut_dataset[column].mean()
 
 def plot_astronauts_vs_time(nasa_astronaut_dataset):
     """
@@ -259,19 +206,18 @@ def plot_astronauts_vs_time(nasa_astronaut_dataset):
 
     """
     astronauts_per_year = frequency(nasa_astronaut_dataset, 1)
-    new ={k: v for k, v in sorted(astronauts_per_year.items(),
-                                  key=lambda item: item[0], reverse = False)}
+    new = dict(sorted(astronauts_per_year.items(), key=lambda item: item[1],
+                      reverse=True))
     years = list(new.keys())
 
     astronauts = list(new.values())
 
-    
     years = list(map(float, years))
     astronauts = list(map(float, astronauts))
 
     x_ticks = np.arange(min(years), max(years), 5)
     plt.xticks(x_ticks)
-    plt.plot(years,astronauts)
+    plt.plot(years, astronauts)
     plt.xlabel("Year")
     plt.ylabel("Number of Astronauts")
     plt.title("Number of NASA Astronauts over the Years")
@@ -292,20 +238,20 @@ def grad_school_vs_not_grad_school(nasa_astronaut_dataset):
     """
     gradschool = 0
     not_gradschool = 0
-    grad_or_not = list(nasa_astronaut_dataset.iloc[:,9])
+    grad_or_not = list(nasa_astronaut_dataset.iloc[:, 9])
     for i in grad_or_not:
-        if type(i) == str:
-            gradschool +=1
+        if isinstance(i, str):
+            gradschool += 1
             continue
         not_gradschool += 1
-        
+
     return [gradschool, not_gradschool]
-        
+
 
 def age_vs_group(nasa_astronaut_dataset):
     """
     Plots minimum, average, and maximum age of astronauts in each astronaut
-    group. 
+    group.
 
     Does not take into account those without an official group number.
 
@@ -317,21 +263,22 @@ def age_vs_group(nasa_astronaut_dataset):
     values = []
     for i in range(19):
         grouper = nasa_astronaut_dataset[nasa_astronaut_dataset.Group == i]
-        
+
         youngest = (grouper["Selection Age"]).min()
         mean = (grouper["Selection Age"]).mean()
         oldest = (grouper["Selection Age"]).max()
-        
+
         values.append((youngest, mean, oldest))
     groups = array(list(range(19)))
-   
+
     for temp in zip(*values):
         plot(groups, array(temp))
-    
+
     title('Age Distribution of Astronaut Groups')
     xlabel('Group Number')
     ylabel('Age (yrs)')
     legend(['min', 'avg', 'max'], loc='upper right')
+
 
 def most_common_state(nasa_astronaut_dataset):
     """
@@ -348,24 +295,24 @@ def most_common_state(nasa_astronaut_dataset):
     for key in frequent_state:
         if key.isupper():
             most_comon_states[key] = frequent_state[key]
-            
-    most_comon_states_keys =list( most_comon_states.keys() )
-    most_comon_numbers =list( most_comon_states.values() )
+
+    most_comon_states_keys = list(most_comon_states.keys())
+    most_comon_numbers = list(most_comon_states.values())
 
     state_df = pandas.DataFrame(list(zip(most_comon_states_keys, most_comon_numbers)),
-               columns =['state', 'value'])
-    
-    import plotly.express as px  # Be sure to import express
+                                columns=['state', 'value'])
+
     fig = px.choropleth(state_df,  # Input Pandas DataFrame
                         locations="state",  # DataFrame column with locations
                         color="value",  # DataFrame column with color values
-                        hover_name="state", # DataFrame column hover info
-                        locationmode = 'USA-states') # Set to plot as US States
+                        hover_name="state",  # DataFrame column hover info
+                        locationmode='USA-states')  # Set to plot as US States
     fig.update_layout(
-        title_text = 'Most Popular Astronaut Home States', # Create a Title
+        title_text='Most Popular Astronaut Home States',  # Create a Title
         geo_scope='usa',  # Plot only the USA instead of globe
     )
     fig.show()  # Output the plot to the screen
+
 
 def female_astronauts_decade(nasa_astronaut_dataset):
     """
@@ -393,61 +340,64 @@ def female_astronauts_decade(nasa_astronaut_dataset):
         start += 10
         end += 10
         counter += 1
-    
+
     decade = [1950, 1960, 1970, 1980, 1990, 2000]
-    plt.step(decade, frequency_per_decade, color = 'blue')
+    plt.step(decade, frequency_per_decade, color='blue')
     plt.xlabel('Decade')
     plt.ylabel('% Female Astronauts (pct.)')
     plt.title('Female Astronauts Selected Per Decade')
 
     plt.show()
-    
+
+
 def female_per_year(nasa_astronaut_dataset):
     """
     Find the total number of female astronauts per selection group.
-    
+
     Args:
-        nasa_astronaut_dataset: pandas dataset. 
-    
+        nasa_astronaut_dataset: pandas dataset.
+
     Returns:
         female_per_year: a list of the number of females per selection year.
     """
     counter = 1
-    female_per_year = []
+    female_per_year_list = []
 
     while counter <= 20:
         new_set = filter_by_group(nasa_astronaut_dataset, counter, counter)
         frequency_dict = frequency(new_set, 6)
         if 'Female' in frequency_dict:
             num_females = frequency_dict.get('Female')
-            female_per_year.append(num_females)
+            female_per_year_list.append(num_females)
         else:
-            female_per_year.append(0)
+            female_per_year_list.append(0)
         counter += 1
-    
+
     return female_per_year
+
 
 def astronauts_per_group(nasa_astronaut_dataset):
     """
     Creates a list of the number of astronauts per selection group.
-    
+
     Args:
         nasa_astronauts_dataset: a pandas dataframe.
-        
+
     Returns:
-        astronauts_per_group: a list of the number of astronauts per selection group. 
+        astronauts_per_group: a list of the number of astronauts
+        per selection group.
     """
     counter = 1
-    astronauts_per_group = []
+    astronauts_per_group_list = []
 
     while counter <= 20:
         new_set = filter_by_group(nasa_astronaut_dataset, counter, counter)
         frequency_dict = frequency(new_set, 6)
-        values = frequency_dict.values() 
+        values = frequency_dict.values()
         total = sum(values)
-        astronauts_per_group.append(total)
+        astronauts_per_group_list.append(total)
         counter += 1
-        
+
     return astronauts_per_group
 
 
@@ -462,34 +412,34 @@ def military_college_over_time(nasa_astronaut_dataset):
 
     """
     values = []
-    military_experience = []
     for i in range(23):
         grouper = nasa_astronaut_dataset[nasa_astronaut_dataset.Group == i]
-        
+
         college_list = []
         colleges = grouper["Alma Mater"]
-        for i in colleges:
+        for j in colleges:
             i = str(i)
-            split_list = i.split("; ")
+            split_list = j.split("; ")
             college_list += split_list
-            
+
         military_prep = 0
         non = 0
-        for i in college_list:
-            if "US " not in i and "The Citadel" not in i:
+        for k in college_list:
+            if "US " not in k and "The Citadel" not in k:
                 military_prep += 1
             else:
                 non += 1
         if (military_prep + non) > 0:
-            values.append(military_prep / (military_prep + non)* 100)
+            values.append(military_prep / (military_prep + non) * 100)
             continue
         values.append(np.nan)
     group = range(23)
-    plt.scatter(group,values)
+    plt.scatter(group, values)
     plt.xlabel('Group Number')
     plt.ylabel('% From Military College')
     plt.title('Military Education in Austronauts over Time')
-    
+
+
 def top_college_over_time(nasa_astronaut_dataset):
     """
     Lists the college the most astronauts came from for each
@@ -510,8 +460,9 @@ def top_college_over_time(nasa_astronaut_dataset):
         keys = list(frequency_of_colleges.keys())
         if len(keys) > 0:
             values.append(keys[0])
-        
+
     return values
+
 
 def grad_school_over_time(nasa_astronaut_dataset):
     """
@@ -527,23 +478,23 @@ def grad_school_over_time(nasa_astronaut_dataset):
         from the 2013 NASA Astronaut Factbook.
 
     """
-    
+
     sixties = filter_by_year(nasa_astronaut_dataset, 1960, 1970)
     inthesix = grad_school_vs_not_grad_school(sixties)
-    
-    seventies = filter_by_year(nasa_astronaut_dataset, 1970,1980)
+
+    seventies = filter_by_year(nasa_astronaut_dataset, 1970, 1980)
     intheseven = grad_school_vs_not_grad_school(seventies)
-    
+
     eighties = filter_by_year(nasa_astronaut_dataset, 1980, 1990)
     intheeight = grad_school_vs_not_grad_school(eighties)
-    
+
     ninties = filter_by_year(nasa_astronaut_dataset, 1990, 2014)
     inthenine = grad_school_vs_not_grad_school(ninties)
-    
-    labels ='Gradschool','Not'
-    
+
+    labels = 'Gradschool', 'Not'
+
     fig, axs = plt.subplots(2, 2)
-    axs[0, 0].pie(inthesix, labels=labels,autopct='%1.1f%%')
+    axs[0, 0].pie(inthesix, labels=labels, autopct='%1.1f%%')
     axs[0, 0].set_title('1960s')
     axs[0, 1].pie(intheseven, labels=labels, autopct='%1.1f%%')
     axs[0, 1].set_title('1970s')
@@ -551,16 +502,18 @@ def grad_school_over_time(nasa_astronaut_dataset):
     axs[1, 0].set_title('1980s')
     axs[1, 1].pie(inthenine, labels=labels, autopct='%1.1f%%')
     axs[1, 1].set_title('90s and 2000s')
-    
-    fig.suptitle('Astronaut Post-Grad Trends through the Decades',x=.5,y=1, fontsize=13)
+
+    fig.suptitle('Astronaut Post-Grad Trends through the Decades',
+                 x=.5, y=1, fontsize=13)
 
     # Hide x labels and tick labels for top plots and y ticks for right plots.
-    for ax in axs.flat:
-        ax.label_outer()
-    ttl = ax.title
-    ttl.set_position([.5, 1.5])  
+    for axis in axs.flat:
+        axis.label_outer()
+    ttl = axs.title
+    ttl.set_position([.5, 1.5])
 
-def gender_military(nasa_astronaut_dataset, gender, title):
+
+def gender_military(nasa_astronaut_dataset, gender, title_name):
     """
     Creates a bar graph showing how many men/women there were in the
     NASA astronaut dataset and how many of each were military
@@ -573,23 +526,25 @@ def gender_military(nasa_astronaut_dataset, gender, title):
         gender: A list of strings representing the genders to count for and
         in what order.
 
-        title: A string representing the title of the plot.
+        title_name: A string representing the title of the plot.
 
     """
     gender_occurrence = nasa_astronaut_dataset.groupby('Gender').count()
-    gender_military = gender_occurrence["Military Rank"]
+    gender_in_military = gender_occurrence["Military Rank"]
     gender_occurrence_name = gender_occurrence["Name"]
 
-    count_row = nasa_astronaut_dataset.shape[0]
     plt.style.use("ggplot")
-    plt.bar(gender, gender_occurrence_name, width=0.8, label='Civilian', color='silver')
-    plt.bar(gender, gender_military, width = 0.8, label = 'Military', color = 'gold')
+    plt.bar(gender, gender_occurrence_name,
+            width=0.8, label='Civilian', color='silver')
+    plt.bar(gender, gender_in_military, width=0.8,
+            label='Military', color='gold')
     plt.xlabel("Gender")
     plt.ylabel("Number of Astronauts")
-    plt.title(title)
+    plt.title(title_name)
 
     plt.legend(loc="upper left")
     plt.show()
+
 
 def first_v_last(nasa_astronaut_dataset):
     """
@@ -603,37 +558,44 @@ def first_v_last(nasa_astronaut_dataset):
     first = filter_by_group(nasa_astronaut_dataset, 1, 1)
 
     last = filter_by_group(nasa_astronaut_dataset, 20, 20)
-    
-    gender_military(first, ["Male"], "Gender Distribution of Astronauts in First Astronaut Class")
-    
-    gender_military(last, ["Female", "Male"], "Gender Distribution of Astronauts in Last Astronaut Class")
-    
+
+    gender_military(first, ["Male"],
+                    "Gender Distribution of Astronauts in"
+                    "First Astronaut Class")
+
+    gender_military(last, ["Female", "Male"],
+                    "Gender Distribution of Astronauts in"
+                    "Last Astronaut Class")
+
+
 def female_and_total(nasa_astronaut_dataset):
     """
-    Creates a line plot with the total amount of astronauts selected per group and the total number
-    of females per group. 
-    
-    Args: 
+    Creates a line plot with the total amount
+    of astronauts selected per group and the total number
+    of females per group.
+
+    Args:
         nasa_astronaut_dataset: a pandas dataset.
-        
-    Returns: 
-        A plot of astronauts selected per group alongside female astronauts selected per group.
+
+    Returns:
+        A plot of astronauts selected per group alongside
+        female astronauts selected per group.
     """
     females = female_per_year(nasa_astronaut_dataset)
     total_per_year = astronauts_per_group(nasa_astronaut_dataset)
 
-
     group = []
     for i in range(20):
-         group.append(i+1)
-    
-    plt.plot(group, total_per_year, color = 'purple', label = 'Total Astronauts')
-    plt.fill_between(group, total_per_year, color = 'purple')
-    plt.plot(group, females, color = 'pink', label = 'Female Astronauts')
-    plt.fill_between(group, females, color = 'pink')
+        group.append(i+1)
+
+    plt.plot(group, total_per_year, color='purple', label='Total Astronauts')
+    plt.fill_between(group, total_per_year, color='purple')
+    plt.plot(group, females, color='pink', label='Female Astronauts')
+    plt.fill_between(group, females, color='pink')
     plt.xticks(np.arange(min(group), max(group)+1, 1.0))
     plt.xlabel('Selection Groups')
     plt.ylabel('Number of Astronauts')
-    plt.title('Number of astronauts per Selection Group and Number of Females per Group')
+    plt.title("Number of astronauts per Selection"
+              " Group and Number of Females per Group")
     plt.legend(loc="upper left", prop={'size': 8.5})
     plt.show()

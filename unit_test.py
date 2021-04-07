@@ -1,298 +1,141 @@
 """
-Test library functions to find and identify protein-coding genes in DNA.
+Check the correctness of password checkers.
 """
-from collections import Counter
-import pytest
+# Import all required libraries.
+import matplotlib.pyplot as plt
+import pandas
+import requests
+import itertools
+import math
+import numpy as np
+
+# Import the student's submitted code.
+from obtain import get_data
+nasa_astronaut_dataset = get_data()
 
 from functions import (
-    get_data,
-    change_dates,
-    add_selection_age,
-    find_all_birth_state,
-    add_birth_state,
-    highest,
-    filter_by_year,
-    filter_by_group,
-    frequency,
-    tops,
-    engineer,
-    gender_military,
-    most_space_walks,
-    average,
-    grad_school_vs_not_grad_school,
-    average_age_vs_group,
-    most_common_state,
-    grad_school_over_time,
-    first_v_last
+    change_dates
+    add_selection_age
+    filter_by_year
+    filter_by_group
+    frequency
+    engineer
+    grad_school_vs_not_grad_school
+    top_college_over_time
+    tops
 )
 
 
-# Define sets of test cases.
-get_complement_cases = [
-    # Check that the complement of A is T.
-    ("A", "T"),
-    # Check that the complement of C is G.
-    ("C", "G"),
-    # Check that the complement of T is A.
-    ("T", "A"),
-    # Check that the complement of G is C.
-    ("G", "C"),
-]
 
-get_reverse_complement_cases = [
-    # Check a single nucleotide, which should be the same as the complement.
-    ("A", "T"),
-    # Check to make sure it returns the reversed compliment, not just the compliment.
-    ("AC", "GT"),
-]
-
-rest_of_orf_cases = [
-    # Check a start followed by a stop.
-    ("ATGTGA", "ATG"),
-    # Check a case without a stop codon.
-    ("ATGAAA", "ATGAAA"),
-    # Check a case without a stop codon where the length is not a multiple of 3.
-    ("ATGA", "ATGA"),
-    # Check a case where another start codon is in the nucleotide.
-    ("ATGATGTGA", "ATGATG"),
-    # Check a case where there is an out-of-frame stop codon
-    ("ATGATAGAATGA", "ATGATAGAA"),
-
-]
-
-find_all_orfs_one_frame_cases = [
-    # Check a strand with a single ORF.
-    ("ATGTGA", ["ATG"]),
-    # Check a strand with two ORFs.
-    ("ATGTAAATGAAATAA", ["ATG", "ATGAAA"]),
-    # Check a strand with no stop codon
-    ("ATGAAA", ["ATGAAA"])
-]
-
-find_all_orfs_cases = [
-    # This case from find_all_orfs has no ORFs in other frames, so it should
-    # return the same result as in the one_frame case.
-    ("ATGTAAATGAAATAA", ["ATG", "ATGAAA"]),
-    # Check out of frame ORFs
-    ("AATGAAA", ["ATGAAA"]),
-]
-
-find_all_orfs_both_strands_cases = [
-    # Test a short strand starting with a start codon whose reverse complement
-    # is itself. Thus this should return two copies of the same ORF.
-    ("ATGCAT", ["ATGCAT", "ATGCAT"]),
-    # Test a short strand with different ORFs for the reverse copy.
-    ("ATGTTGTATGCAT", ['ATGTTGTATGCAT', 'ATGCAT', 'ATGCATACAACAT']),
-    # Test a short strand with no reverse compiment ORF.
-    ("ATG", ["ATG"]),
-]
-
-find_longest_orf_cases = [
-    # An ORF covering the whole strand is by default the longest ORF.
-    ("ATGAAAAAAAAA", "ATGAAAAAAAAA"),
-    # Test strand that has multiple ORFs of different lengths.
-    ("ATGTAAATGAAATAA", "ATGAAA"),
-]
-
-encode_amino_acids_cases = [
-    # Check a single start codon.
-    ("ATG", "M"),
-    # Check a case in which the length is not a multiple of 3.
-    ("ATGCCCGCTTT", "MPA"),
-    # Check a case with two ORFs
-    ("ATGTAAATGAAATAA", "M*MK*"),
-]
-
-
-# Define additional testing lists and functions that check other properties of
-# functions in gene_finder.py.
-@pytest.mark.parametrize("nucleotide", ["A", "T", "C", "G"])
-def test_double_complement(nucleotide):
+@pytest.mark.parametrize("password,passes_check", [
+    # Check that common passwords are rejected.
+    (1, ),
+    ("qwerty", False),
+    ("password", False),
+    # Check that passwords *containing* common passwords are fine.
+    ("12345678", True),
+    ("asdfqwerty", True),
+    ("ilovepasswords", True),
+    # Check that passwords not matching the common passwords are fine.
+    ("iloveyou", True),
+    ("letmein", True),
+    ("000000", True),
+    ("TROGDOR the BURNiNATOR", True),
+])
+def test_frequency(password, passes_check):
     """
-    Check that taking the complement of a complement of a nucleotide produces
-    the original nucleotide.
+    Check that the password checker rejects one of the three common passwords
+    and accepts all others.
 
     Args:
-        nucleotide: A single-character string representing one of the four DNA
-            nucleotides.
+        password: A string representing the password to check.
+        passes_check: A bool representing the expected output of the checker.
     """
-    assert get_complement(get_complement(nucleotide)) == nucleotide
+    assert frequency() == passes_check
 
 
-@pytest.mark.parametrize("strand", "ATG")
-def test_double_reverse_complement(strand):
+@pytest.mark.parametrize("password,passes_check", [
+    # Check that too short of a password is rejected.
+    ("", False),
+    ("abc", False),
+    # Check that too long of a password is rejected.
+    ("a" * 17, False),
+    # Check that exactly 6 characters is accepted.
+    ("0" * 6, True),
+    # Check that exactly 16 characters is accepted.
+    ("1" * 16, True),
+])
+def test_meets_length_restriction(password, passes_check):
     """
-    Check that taking the reverse complement of the reverse complement of
-    a nucleotide strand produces the origional nucleotide.
+    Check that the password checker only accepts passwords between 6 and 16
+    characters long, inclusive.
 
     Args:
-        nucleotide: A string representing a strand of nucleotides
+        password: A string representing the password to check.
+        passes_check: A bool representing the expected output of the checker.
     """
-    assert get_reverse_complement(get_reverse_complement(strand)) == strand
-
-################################################################################
-# Don't change anything below these lines.
-################################################################################
+    assert meets_length_restriction(password) == passes_check
 
 
-# Define standard testing functions to check functions' outputs given certain
-# inputs defined above.
-@pytest.mark.parametrize("nucleotide,complement", get_complement_cases)
-def test_get_complement(nucleotide, complement):
+@pytest.mark.parametrize("password,passes_check", [
+    # Check that an empty string is rejected.
+    ("", False),
+    # Check that a password only missing lowercase letters is rejected.
+    ("A1!", False),
+    # Check that a password only missing uppercase letters is rejected.
+    ("00:1a:7d:da:71:10", False),
+    # Check that a password only missing digits is rejected.
+    ("zomgCamelCase!!", False),
+    # Check that a password only missing punctuation is rejected.
+    ("LaTeX2e", False),
+    # Check that a password containing all four character classes is accepted.
+    (ascii_lowercase + ascii_uppercase + digits + punctuation, True),
+    # Check that a password containing all four character classes, as well as
+    # characters not in any of the four classes, is accepted.
+    ("Charlie, DOB 1/1/1947", True),
+])
+def test_uses_all_character_classes(password, passes_check):
     """
-    Test that each nucleotide is mapped to its correct complement.
-
-    Given a single-character string representing a nucleotide that is "A", "T",
-    "G", or "C", check that the get_complement function correctly maps the
-    string to a single-character string representing the nucleotide's complement
-    (also "A", "T", "G", or "C").
+    Check that the password checker only accepts passwords that use at least one
+    character each in lowercase letters, uppercase letters, digits, and
+    punctuation.
 
     Args:
-        nucleotide: A single-character string equal to "A", "C", "T", or "G"
-            representing a nucleotide.
-        complement: A single-character string equal to "A", "C", "T", or "G"
-            representing the expected complement of nucleotide.
+        password: A string representing the password to check.
+        passes_check: A bool representing the expected output of the checker.
     """
-    assert get_complement(nucleotide) == complement
+    assert uses_all_character_classes(password) == passes_check
 
 
-@pytest.mark.parametrize("strand,reverse_complement",
-                         get_reverse_complement_cases)
-def test_get_reverse_complement(strand, reverse_complement):
+@pytest.mark.parametrize("password,passes_check", [
+    # Check that an empty string is rejected.
+    ("", False),
+    # Check that a password of exactly 16 characters that does not match all
+    # three other checkers is rejected.
+    ("0123456789abcdef", False),
+    # Check that a password of at most 16 characters, but a common password, is
+    # rejected.
+    ("password", False),
+    # Check that a password shorter than 6 characters is rejected.
+    ("pytho", False),
+    # Check that a password of at most 16 characters, not a common password,
+    # at least 6 characters, but not containing all four character classes, is
+    # rejected.
+    ("diamond hands", False),
+    # Check that a password containing all four character classes, and between 6
+    # and 16 characters (inclusive) is accepted.
+    ("/r/TF2", True),
+    # Check that a password longer than 16 characters, but not matching all
+    # three other checkers, is rejected.
+    ("longer than 16 characters, oh yeah", True),
+])
+def test_long_enough_or_all_rules(password, passes_check):
     """
-    Test that a string of nucleotides get mapped to its reverse complement.
-
-    Check that given a string consisting of "A", "C", "T", and "G" that
-    represents a strand of DNA, the get_reverse_complement function correctly
-    returns the reverse complement of the string, defined as the complement of
-    each nucleotide in the strand in reverse order.
+    Check that the password checker only accepts passwords that are longer than
+    16 characters, or that pass all of the other checkers.
 
     Args:
-        strand: A string consisting only of the characters "A", "C", "T", and
-            "G" representing a strand of DNA.
-        reverse_complement: A string representing the expected reverse
-            complement of strand.
+        password: A string representing the password to check.
+        passes_check: A bool representing the expected output of the checker.
     """
-    assert get_reverse_complement(strand) == reverse_complement
-
-
-@pytest.mark.parametrize("strand,rest", rest_of_orf_cases)
-def test_rest_of_orf(strand, rest):
-    """
-    Test that a string representing a strand of DNA gets mapped to the rest of
-    its open reading frame.
-
-    Check that given a string representing a strand of DNA as defined above, the
-    rest_of_orf function returns a string representing a strand of DNA for the
-    rest of the given strand's open reading frame. This is the original strand
-    until reading sets of three nucleotides results in a STOP codon, or the
-    entire strand if no such codon appears when reading the strand.
-
-    Args:
-        strand: A string representing a strand of DNA.
-        rest: A string representing the expected rest of the open reading frame
-            of strand, or the entirety of strand if reading it does not result
-            in a STOP codon at any point.
-    """
-    assert rest_of_orf(strand) == rest
-
-
-@pytest.mark.parametrize("strand,orfs", find_all_orfs_one_frame_cases)
-def test_find_all_orfs_oneframe(strand, orfs):
-    """
-    Test that a string representing a strand of DNA gets mapped to a list of all
-    non-overlapping open reading frames (ORFs) aligned to its frame.
-
-    Check that given a string representing a strand of DNA as defined above, the
-    find_all_orfs_oneframe function returns a list of strings representing all
-    non-overlapping ORFs in the strand that are aligned to the strand's frame
-    (i.e., starting a multiple of 3 nucleotides from the start of the strand).
-    Each ORF is a strand of DNA from a START codon to a STOP codon (or in the
-    case of the last ORF in the strand, to the end of the strand if no STOP
-    codon is encountered during reading).
-
-    Args:
-        strand: A string representing a strand of DNA.
-        orfs: A list of strings representing the expected strands of DNA that
-            are ORFs within strand's frame.
-    """
-    assert Counter(find_all_orfs_one_frame(strand)) == Counter(orfs)
-
-
-@pytest.mark.parametrize("strand,orfs", find_all_orfs_cases)
-def test_find_all_orfs(strand, orfs):
-    """
-    Test that a string representing a strand of DNA gets mapped to a list of all
-    open reading frames within the strand, with no overlapping ORFs within any
-    given frame of the strand.
-
-    Check that given a string representing a strand of DNA as defined above, the
-    find_all_orfs function returns a list of strings representing all ORFs in
-    the strand as defined above. Overlapping ORFs are allowed as long as they do
-    not occur in different frames (i.e., each ORF is only non-overlapping with
-    the other ORFs in its own frame).
-
-    Args:
-        strand: A string representing a strand of DNA.
-        orfs: A list of strings representing the expected strands of DNA that
-            are ORFs within strand, with no overlapping ORFs within one frame of
-            strand.
-    """
-    assert Counter(find_all_orfs(strand)) == Counter(orfs)
-
-
-@pytest.mark.parametrize("strand,orfs", find_all_orfs_both_strands_cases)
-def test_find_all_orfs_both_strands(strand, orfs):
-    """
-    Test that a string representing a strand of DNA gets mapped to a list of
-    all open reading frames within the strand or its reverse complement, with no
-    overlapping ORFs within a given frame.
-
-    Check that given a string representing a strand of DNA as defined above, the
-    find_all_orfs_both_strands function returns a list of strings representing
-    all ORFs in the strand or its reverse complement as defined above.
-
-    Args:
-        strand: A string representing a strand of DNA.
-        orfs: A list of strings representing the expected strands of DNA that
-            are ORFs within strand or its reverse complement, with no
-            overlapping ORFs within one frame of either.
-    """
-    assert Counter(find_all_orfs_both_strands(strand)) == Counter(orfs)
-
-
-@pytest.mark.parametrize("strand,orf", find_longest_orf_cases)
-def test_find_longest_orf(strand, orf):
-    """
-    Test that a string representing a strand of DNA gets mapped to a string
-    representing the longest ORF within the strand or its reverse complement.
-
-    Check that given a string representing a strand of DNA as defined above, the
-    find_longest_orf function returns a string representing a strand of DNA
-    equal to the longest ORF within the strand or its reverse complement.
-
-    Args:
-        strand: A string representing a strand of DNA.
-        orf: A string representing a strand of DNA equal to the expected longest
-            ORF in strand or its reverse complement.
-    """
-    assert find_longest_orf(strand) == orf
-
-
-@pytest.mark.parametrize("strand,protein", encode_amino_acids_cases)
-def test_encode_amino_acids(strand, protein):
-    """
-    Test that a string representing a strand of DNA gets mapped to a string
-    representing the amino acids encoded by the strand.
-
-    Check that given a string representing a strand of DNA as defined above, the
-    encode_amino_acids function returns a string consisting of one-letter IUPAC
-    amino acid codes corresponding to the sequence amino acids encoded by the
-    strand.
-
-    Args:
-        strand: A string representing a strand of DNA.
-        protein: A string representing the expected sequence one-letter IUPAC
-            amino acid codes encoded by strand.
-    """
-    assert encode_amino_acids(strand) == protein
+    assert long_enough_or_all_rules(password) == passes_check
