@@ -1,58 +1,30 @@
 import matplotlib.pyplot as plt
 import pandas
 import requests
-import zipfile
-import kaggle
-from kaggle.api.kaggle_api_extended import KaggleApi
 import itertools
 import math
 import numpy as np
-from pylab import plot, title, xlabel, ylabel, savefig, legend, array
-
-def get_data():
-    """
-    Uses Kaggle API to download astronaut dataset, zipfile to unzip
-    the dataset, and then loads it into variable nasa_astronaut_dataset
-    using Pandas.
-
-    Note that the Kaggle Dataset was published by NASA as the "Astronaut Fact
-    Book" (April 2013 edition) and provides educational /military backgrounds
-    for astronauts from 1959-2013. In some cells are blank, indicating special
-    circumstances. A missing military rank/branch indicates the person was a
-    civilian, a missing death date/mission means the person has not died yet,
-    and a blank year/group indicates someone who was a payload specialist, or
-    someone who did not undergo formal astronaut selectrion/training and were
-    not designated NASA astronauts. They were nomiated by a non-US
-    space agency or a paylad sponsor, typically from the research community.
-
-    Returns:
-        nasa_astronaut_dataset: A pandas dataframe containing information
-        about NASA astronauts.
-    """
-    api = KaggleApi()
-    api.authenticate()
-    api.dataset_download_files('nasa/astronaut-yearbook')
-    with zipfile.ZipFile("astronaut-yearbook.zip", 'r') as zip_ref:
-        zip_ref.extractall()
-    nasa_astronaut_dataset = pandas.read_csv("astronauts.csv")
-    return nasa_astronaut_dataset
 
 def change_dates(nasa_astronaut_dataset):
     """
-    Takes NASA astronaut dataframe adds each astronauts selection age to a column
-    based on their birth date and selection year.
+    Takes NASA astronaut dataframe adds each astronauts selection age to a
+    column based on their birth date and selection year.
 
     Args:
         nasa_astronaut_dataset: A pandas dataframe containing information
         from the 2013 NASA Astronaut Factbook.
         
     Returns:
-        nasa_astronaut_dataset: Pandas Dataframe with added "Selection Age" column.
+        nasa_astronaut_dataset: Pandas Dataframe with added "Selection Age"
+        column
     """
-    nasa_astronaut_dataset['Birth Date'] = nasa_astronaut_dataset['Birth Date'].str[-4:]
-    nasa_astronaut_dataset["Birth Date"] = nasa_astronaut_dataset["Birth Date"].astype(float)
-    nasa_astronaut_dataset["Selection Age"] = (nasa_astronaut_dataset["Year"]
-                                               - nasa_astronaut_dataset["Birth Date"])
+    nasa_astronaut_dataset['Birth Date'] = (
+    nasa_astronaut_dataset['Birth Date'].str[-4:])
+    nasa_astronaut_dataset["Birth Date"] = (
+    nasa_astronaut_dataset["Birth Date"].astype(float))
+    nasa_astronaut_dataset["Selection Age"] = (
+        nasa_astronaut_dataset["Year"]
+        - nasa_astronaut_dataset["Birth Date"])
 
     return nasa_astronaut_dataset
 
@@ -66,24 +38,10 @@ def add_selection_age(nasa_astronaut_dataset):
     Returns:
         nasa_astronaut_datatset: the updated Pandas dataframe with the new column. 
     """
-    nasa_astronaut_dataset["Birth Date"] = nasa_astronaut_dataset["Birth Date"].astype(float)
-    nasa_astronaut_dataset = nasa_astronaut_dataset.rename({"Birth Date": "Birth Year"}, axis=1, inplace = True)
-    return nasa_astronaut_dataset
-
-def add_birth_state(nasa_astronaut_dataset):
-    """
-    Creates a new column with the home state of each astronaut.
-    
-    Args:
-        nasa_astronaut_dataset: A pandas dataframe containing information
-        from the 2013 NASA Astronaut Factbook.
-        
-    Returns
-        nasa_astronaut_dataset: A revised Pandas dataframe with a
-        column containing the birth state initials instead of the
-        birth place.
-    """
-    nasa_astronaut_dataset["Birt State"] = nasa_astronaut_dataset["Birth Place"].str[-2:]
+    nasa_astronaut_dataset["Birth Date"] = (
+    nasa_astronaut_dataset["Birth Date"].astype(float))
+    nasa_astronaut_dataset = 
+    nasa_astronaut_dataset.rename({"Birth Date": "Birth Year"}, axis=1, inplace = True)
     return nasa_astronaut_dataset
 
 
@@ -230,21 +188,6 @@ def engineer(nasa_astronaut_dataset):
     total = engineer + non
     print(f"{engineer / total * 100} % of Astronauts majored"
           " in some kind of Engineering")
-
-def average(nasa_astronaut_dataset, column):
-    """
-    Returns the average of a column in a daframe.
-
-    Args:
-        nasa_astronaut_dataset: A pandas dataframe containing information
-        from the 2013 NASA Astronaut Factbook.
-
-        column: An integar representing the column to take the average of.
-
-    Returns:
-        A float representing the mean of the column.
-    """
-    return nasa_astronaut_dataset[column].mean()
 
 def plot_astronauts_vs_time(nasa_astronaut_dataset):
     """
@@ -435,7 +378,8 @@ def astronauts_per_group(nasa_astronaut_dataset):
         nasa_astronauts_dataset: a pandas dataframe.
         
     Returns:
-        astronauts_per_group: a list of the number of astronauts per selection group. 
+        astronauts_per_group: a list of the number of astronauts
+        per selection group.
     """
     counter = 1
     astronauts_per_group = []
@@ -552,7 +496,8 @@ def grad_school_over_time(nasa_astronaut_dataset):
     axs[1, 1].pie(inthenine, labels=labels, autopct='%1.1f%%')
     axs[1, 1].set_title('90s and 2000s')
     
-    fig.suptitle('Astronaut Post-Grad Trends through the Decades',x=.5,y=1, fontsize=13)
+    fig.suptitle('Astronaut Post-Grad Trends through the Decades',
+                 x=.5,y=1, fontsize=13)
 
     # Hide x labels and tick labels for top plots and y ticks for right plots.
     for ax in axs.flat:
@@ -582,8 +527,10 @@ def gender_military(nasa_astronaut_dataset, gender, title):
 
     count_row = nasa_astronaut_dataset.shape[0]
     plt.style.use("ggplot")
-    plt.bar(gender, gender_occurrence_name, width=0.8, label='Civilian', color='silver')
-    plt.bar(gender, gender_military, width = 0.8, label = 'Military', color = 'gold')
+    plt.bar(gender, gender_occurrence_name,
+            width=0.8, label='Civilian', color='silver')
+    plt.bar(gender, gender_military, width = 0.8,
+            label = 'Military', color = 'gold')
     plt.xlabel("Gender")
     plt.ylabel("Number of Astronauts")
     plt.title(title)
@@ -604,20 +551,26 @@ def first_v_last(nasa_astronaut_dataset):
 
     last = filter_by_group(nasa_astronaut_dataset, 20, 20)
     
-    gender_military(first, ["Male"], "Gender Distribution of Astronauts in First Astronaut Class")
+    gender_military(first, ["Male"],
+                    "Gender Distribution of Astronauts in"
+                    "First Astronaut Class")
     
-    gender_military(last, ["Female", "Male"], "Gender Distribution of Astronauts in Last Astronaut Class")
+    gender_military(last, ["Female", "Male"],
+                    "Gender Distribution of Astronauts in"
+                    "Last Astronaut Class")
     
 def female_and_total(nasa_astronaut_dataset):
     """
-    Creates a line plot with the total amount of astronauts selected per group and the total number
+    Creates a line plot with the total amount
+    of astronauts selected per group and the total number
     of females per group. 
     
     Args: 
         nasa_astronaut_dataset: a pandas dataset.
         
     Returns: 
-        A plot of astronauts selected per group alongside female astronauts selected per group.
+        A plot of astronauts selected per group alongside
+        female astronauts selected per group.
     """
     females = female_per_year(nasa_astronaut_dataset)
     total_per_year = astronauts_per_group(nasa_astronaut_dataset)
@@ -634,6 +587,8 @@ def female_and_total(nasa_astronaut_dataset):
     plt.xticks(np.arange(min(group), max(group)+1, 1.0))
     plt.xlabel('Selection Groups')
     plt.ylabel('Number of Astronauts')
-    plt.title('Number of astronauts per Selection Group and Number of Females per Group')
+    plt.title('Number of astronauts per Selection"
+              " Group and Number of Females per Group"')
     plt.legend(loc="upper left", prop={'size': 8.5})
     plt.show()
+              
