@@ -26,7 +26,6 @@ from functions import (
 )
 
 
-
 @pytest.mark.parametrize("password,passes_check", [
     # Check that common passwords are rejected.
     (1, ),

@@ -118,15 +118,15 @@ def frequency(nasa_astronaut_dataset, column):
             college_frequency[college] = 1
         else:
             college_frequency[college] += 1
- #   new = {k: v for k, v in sorted(college_frequency.items(),
-           #                        key=lambda item: item[1], reverse=True)}
+#    new = {k: v for k, v in sorted(college_frequency.items(),
+#                                 key=lambda item: item[1], reverse=True)}
     new = dict(sorted(college_frequency.items(), key=lambda item: item[1],
                       reverse=True))
     new.pop("nan", None)
     return new
 
 
-def college_bar(nasa_astronaut_dataset, column):
+def horizontal_bar(nasa_astronaut_dataset, column, title):
     """
     Creates horizonat bar graph of top 25 most common cells in a column.
 
@@ -136,6 +136,8 @@ def college_bar(nasa_astronaut_dataset, column):
 
         column: An integar representing what column to count with the
         frequency function.
+
+        title: A string representign the title of the char
     """
     plt.rcdefaults()
     _, axis = plt.subplots()
@@ -147,7 +149,7 @@ def college_bar(nasa_astronaut_dataset, column):
     axis.barh(colleges, numbers, align='center', height=.8)
     axis.invert_yaxis()  # labels read top-to-bottom
     axis.set_xlabel('Number of Astronauts per Major')
-    axis.set_title('Most Common Astronaut Majors')
+    axis.set_title(f'Top 25 Most Common Astronaut {title}')
 
     plt.show()
 
@@ -188,8 +190,8 @@ def engineer(nasa_astronaut_dataset):
             engineer_count += 1
             continue
         non += 1
-    total = engineer + non
-    print(f"{engineer / total * 100} % of Astronauts majored"
+    total = engineer_count + non
+    print(f"{engineer_count / total * 100} % of Astronauts majored"
           " in some kind of Engineering")
 
 
@@ -205,11 +207,10 @@ def plot_astronauts_vs_time(nasa_astronaut_dataset):
         from the 2013 NASA Astronaut Factbook.
 
     """
-    astronauts_per_year = frequency(nasa_astronaut_dataset, 1)
-    new = dict(sorted(astronauts_per_year.items(), key=lambda item: item[1],
-                      reverse=True))
-    years = list(new.keys())
+    new = frequency(nasa_astronaut_dataset, 1)
+    new = dict(sorted(new.items(), key=lambda item: item[0]))
 
+    years = list(new.keys())
     astronauts = list(new.values())
 
     years = list(map(float, years))
@@ -217,7 +218,7 @@ def plot_astronauts_vs_time(nasa_astronaut_dataset):
 
     x_ticks = np.arange(min(years), max(years), 5)
     plt.xticks(x_ticks)
-    plt.plot(years, astronauts)
+    plt.plot( years, astronauts)
     plt.xlabel("Year")
     plt.ylabel("Number of Astronauts")
     plt.title("Number of NASA Astronauts over the Years")
@@ -373,7 +374,7 @@ def female_per_year(nasa_astronaut_dataset):
             female_per_year_list.append(0)
         counter += 1
 
-    return female_per_year
+    return female_per_year_list
 
 
 def astronauts_per_group(nasa_astronaut_dataset):
@@ -398,7 +399,7 @@ def astronauts_per_group(nasa_astronaut_dataset):
         astronauts_per_group_list.append(total)
         counter += 1
 
-    return astronauts_per_group
+    return astronauts_per_group_list
 
 
 def military_college_over_time(nasa_astronaut_dataset):
@@ -509,8 +510,6 @@ def grad_school_over_time(nasa_astronaut_dataset):
     # Hide x labels and tick labels for top plots and y ticks for right plots.
     for axis in axs.flat:
         axis.label_outer()
-    ttl = axs.title
-    ttl.set_position([.5, 1.5])
 
 
 def gender_military(nasa_astronaut_dataset, gender, title_name):
@@ -583,11 +582,10 @@ def female_and_total(nasa_astronaut_dataset):
     """
     females = female_per_year(nasa_astronaut_dataset)
     total_per_year = astronauts_per_group(nasa_astronaut_dataset)
-
     group = []
     for i in range(20):
         group.append(i+1)
-
+    print(len(group), len(total_per_year), len(females))
     plt.plot(group, total_per_year, color='purple', label='Total Astronauts')
     plt.fill_between(group, total_per_year, color='purple')
     plt.plot(group, females, color='pink', label='Female Astronauts')
