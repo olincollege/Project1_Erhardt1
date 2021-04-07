@@ -187,8 +187,8 @@ def college_bar(nasa_astronaut_dataset, column):
 
     ax.barh(colleges, numbers, align='center', height=.8)
     ax.invert_yaxis()  # labels read top-to-bottom
-    ax.set_xlabel('Number of Majors')
-    ax.set_title('How fast do you want to go today?')
+    ax.set_xlabel('Number of Astronauts per Major')
+    ax.set_title('Most Common Astronaut Majors')
     
     plt.show()
 
