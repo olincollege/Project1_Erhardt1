@@ -1,47 +1,137 @@
 """
-Check the correctness of password checkers.
+Perform Unit Tests on Functions
 """
 # Import all required libraries.
-import matplotlib.pyplot as plt
+import pytest
 import pandas
-import requests
-import itertools
-import math
-import numpy as np
 
-# Import the student's submitted code.
-from obtain import get_data
-nasa_astronaut_dataset = get_data()
-
+# Import functions
 from functions import (
-    change_dates
-    add_selection_age
+    change_dates,
+    frequency,
+    tops,
+    grad_school_vs_not_grad_school,
     filter_by_year
-    filter_by_group
-    frequency
-    engineer
-    grad_school_vs_not_grad_school
-    top_college_over_time
-    tops
 )
+# Import the test dataset
+test_data = pandas.read_csv("Test_Data.csv")
 
 
-@pytest.mark.parametrize("password,passes_check", [
-    # Check that common passwords are rejected.
-    (1, ),
-    ("qwerty", False),
-    ("password", False),
-    # Check that passwords *containing* common passwords are fine.
-    ("12345678", True),
-    ("asdfqwerty", True),
-    ("ilovepasswords", True),
-    # Check that passwords not matching the common passwords are fine.
-    ("iloveyou", True),
-    ("letmein", True),
-    ("000000", True),
-    ("TROGDOR the BURNiNATOR", True),
+@pytest.mark.parametrize("testing_data, passes_check", [
+    # Test to Make Sure a column named "Selection Age" was made
+    (test_data, True)
 ])
-def test_frequency(password, passes_check):
+def test_changed_dates(testing_data, passes_check):
+    """
+    Check that the changed_dates function adds a selection_age column.
+
+    Args:
+        testing_data: A pandas dataframe representing the test data.
+
+        passes_check: A boolean represeting what the assertion should be.
+    """
+    changed_dates = change_dates(testing_data)
+    assert "Selection Age" in changed_dates
+
+
+@pytest.mark.parametrize("dataset, column ,passes_check", [
+
+    # Test that Year column returns Years with float values correctly.
+    (test_data, 1, {'220.0': 2, '2004.0': 1}),
+
+    # Test that Status column returns Years with string values correctly.
+    (test_data, 3, {'Active': 2, 'Retired': 1}),
+
+    # Test that an empty column returns an empty dictionary
+    (test_data, 10, {}),
+
+    # Test that an Alma Mater with multiple values gets split correctly
+    (test_data, 7, {"Olin College": 2, "University of Arizona": 1,
+                    "Wellesley": 1, "University of Colorado": 1,
+                    "University of California-Santa Barbara": 1,
+                    "Montana State University": 1}), ])
+def test_frequency(dataset, column, passes_check):
+    """
+    Check that the frequency function returns the correct dictionaries.
+
+    Args:
+        dataset: A pandas dataframe representing the test data
+
+        column: An integar representing the column to test
+
+        passes_check: A bool representing the expected output of the checker.
+    """
+    assert frequency(dataset, column) == passes_check
+
+
+# Making a solution dictionary
+new = {"Olin College": 2, "University of Arizona": 1,
+       "Wellesley": 1, "University of Colorado": 1,
+       "University of California-Santa Barbara": 1,
+       "Montana State University": 1}
+
+
+@pytest.mark.parametrize("tester_data, top_number,passes_check", [
+
+    # Make sure tops returns the key-value pair of the highest value
+    # in a dictionary
+    (new, 1, {"Olin College": 2}),
+
+    # Makes sure tops returns the full dicitonary if top_number
+    # is large than the number of key-value pairs
+    (new, 10, new),
+
+])
+def test_tops(tester_data, top_number, passes_check):
+    """
+    Check to make sure the tops function behaves correctly
+
+    Args:
+        tester_data: A pandas dataframe representing the test data.
+
+        top_number: An integar representing the number of items
+        to pull from the dictionary.
+
+        passes_check: A bool representing the expected output of the checker.
+    """
+    assert tops(tester_data, top_number) == passes_check
+
+
+@pytest.mark.parametrize("test_dataset, passes_check", [
+
+    # Make sure grad_school returns the right list for the test data.
+    (test_data, [3, 1]),
+])
+def test_grad_school_vs_not_grad_school(test_dataset, passes_check):
+    """
+    Check to make sure grad_school behaves correctly.
+
+    Args:
+        test_dataset: A pandas dataframe representing the test data.
+
+        passes_check: A bool representing the expected output of the checker.
+    """
+    assert grad_school_vs_not_grad_school(test_dataset) == passes_check
+
+# Making solution dataframes
+
+
+test_2 = test_data.loc[[2, 3], :]
+blank_dataset = pandas.DataFrame(index=[], columns=test_data.columns)
+
+
+@pytest.mark.parametrize("dataset, year_min, year_max, passes_check, checker", [
+    # Make sure that setting the start and end date to one year chooses
+    # only the entry for that year, test <= and >=.
+    (test_data, 2004, 2004, pandas.DataFrame(test_data.loc[0, :]).T, True),
+
+    # Make sure that the filter returns multiple rows when appropriate.
+    (test_data, 220, 220, test_2, True),
+
+    # Make sure filter doesn't include NaN years or anything outside filter years.
+    (test_data, 2019, 2020, blank_dataset, True)
+])
+def test_filter_by_year(dataset, year_min, year_max, passes_check, checker):
     """
     Check that the password checker rejects one of the three common passwords
     and accepts all others.
@@ -50,91 +140,6 @@ def test_frequency(password, passes_check):
         password: A string representing the password to check.
         passes_check: A bool representing the expected output of the checker.
     """
-    assert frequency() == passes_check
+    filtered_dataset = filter_by_year(dataset, year_min, year_max)
 
-
-@pytest.mark.parametrize("password,passes_check", [
-    # Check that too short of a password is rejected.
-    ("", False),
-    ("abc", False),
-    # Check that too long of a password is rejected.
-    ("a" * 17, False),
-    # Check that exactly 6 characters is accepted.
-    ("0" * 6, True),
-    # Check that exactly 16 characters is accepted.
-    ("1" * 16, True),
-])
-def test_meets_length_restriction(password, passes_check):
-    """
-    Check that the password checker only accepts passwords between 6 and 16
-    characters long, inclusive.
-
-    Args:
-        password: A string representing the password to check.
-        passes_check: A bool representing the expected output of the checker.
-    """
-    assert meets_length_restriction(password) == passes_check
-
-
-@pytest.mark.parametrize("password,passes_check", [
-    # Check that an empty string is rejected.
-    ("", False),
-    # Check that a password only missing lowercase letters is rejected.
-    ("A1!", False),
-    # Check that a password only missing uppercase letters is rejected.
-    ("00:1a:7d:da:71:10", False),
-    # Check that a password only missing digits is rejected.
-    ("zomgCamelCase!!", False),
-    # Check that a password only missing punctuation is rejected.
-    ("LaTeX2e", False),
-    # Check that a password containing all four character classes is accepted.
-    (ascii_lowercase + ascii_uppercase + digits + punctuation, True),
-    # Check that a password containing all four character classes, as well as
-    # characters not in any of the four classes, is accepted.
-    ("Charlie, DOB 1/1/1947", True),
-])
-def test_uses_all_character_classes(password, passes_check):
-    """
-    Check that the password checker only accepts passwords that use at least one
-    character each in lowercase letters, uppercase letters, digits, and
-    punctuation.
-
-    Args:
-        password: A string representing the password to check.
-        passes_check: A bool representing the expected output of the checker.
-    """
-    assert uses_all_character_classes(password) == passes_check
-
-
-@pytest.mark.parametrize("password,passes_check", [
-    # Check that an empty string is rejected.
-    ("", False),
-    # Check that a password of exactly 16 characters that does not match all
-    # three other checkers is rejected.
-    ("0123456789abcdef", False),
-    # Check that a password of at most 16 characters, but a common password, is
-    # rejected.
-    ("password", False),
-    # Check that a password shorter than 6 characters is rejected.
-    ("pytho", False),
-    # Check that a password of at most 16 characters, not a common password,
-    # at least 6 characters, but not containing all four character classes, is
-    # rejected.
-    ("diamond hands", False),
-    # Check that a password containing all four character classes, and between 6
-    # and 16 characters (inclusive) is accepted.
-    ("/r/TF2", True),
-    # Check that a password longer than 16 characters, but not matching all
-    # three other checkers, is rejected.
-    ("longer than 16 characters, oh yeah", True),
-])
-def test_long_enough_or_all_rules(password, passes_check):
-    """
-    Check that the password checker only accepts passwords that are longer than
-    16 characters, or that pass all of the other checkers.
-
-    Args:
-        password: A string representing the password to check.
-        passes_check: A bool representing the expected output of the checker.
-    """
-    assert long_enough_or_all_rules(password) == passes_check
+    assert filtered_dataset.shape[0] == passes_check.shape[0]

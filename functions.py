@@ -126,7 +126,7 @@ def frequency(nasa_astronaut_dataset, column):
     return new
 
 
-def horizontal_bar(nasa_astronaut_dataset, column, title):
+def horizontal_bar(nasa_astronaut_dataset, column, title_name):
     """
     Creates horizonat bar graph of top 25 most common cells in a column.
 
@@ -137,7 +137,8 @@ def horizontal_bar(nasa_astronaut_dataset, column, title):
         column: An integar representing what column to count with the
         frequency function.
 
-        title: A string representign the title of the char
+        title_name: A string representing what column the chart should
+        be titled by.
     """
     plt.rcdefaults()
     _, axis = plt.subplots()
@@ -149,7 +150,7 @@ def horizontal_bar(nasa_astronaut_dataset, column, title):
     axis.barh(colleges, numbers, align='center', height=.8)
     axis.invert_yaxis()  # labels read top-to-bottom
     axis.set_xlabel('Number of Astronauts per Major')
-    axis.set_title(f'Top 25 Most Common Astronaut {title}')
+    axis.set_title(f'Top 25 Most Common Astronaut {title_name}')
 
     plt.show()
 
@@ -218,7 +219,7 @@ def plot_astronauts_vs_time(nasa_astronaut_dataset):
 
     x_ticks = np.arange(min(years), max(years), 5)
     plt.xticks(x_ticks)
-    plt.plot( years, astronauts)
+    plt.plot(years, astronauts)
     plt.xlabel("Year")
     plt.ylabel("Number of Astronauts")
     plt.title("Number of NASA Astronauts over the Years")
