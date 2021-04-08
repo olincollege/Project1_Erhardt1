@@ -225,7 +225,7 @@ def plot_astronauts_vs_time(nasa_astronaut_dataset):
     plt.title("Number of NASA Astronauts over the Years")
 
 
-def grad_school_vs_not_grad_school(nasa_astronaut_dataset):
+def grad_school_vs_not_grad_school(nasa_astronaut_dataset, column):
     """
     Returns how many people in the nasa astronaut dataset went
     to graduate school and how many people did not.
@@ -234,13 +234,14 @@ def grad_school_vs_not_grad_school(nasa_astronaut_dataset):
         nasa_astronaut_dataset: A pandas dataframe containing information
         from the 2013 NASA Astronaut Factbook.
 
+        column: An integar representing which column to count.
     Returns:
         a list containing the number of people who went to and did not
         go to gradschool.
     """
     gradschool = 0
     not_gradschool = 0
-    grad_or_not = list(nasa_astronaut_dataset.iloc[:, 9])
+    grad_or_not = list(nasa_astronaut_dataset.iloc[:, column])
     for i in grad_or_not:
         if isinstance(i, str):
             gradschool += 1
@@ -414,7 +415,9 @@ def military_college_over_time(nasa_astronaut_dataset):
 
     """
     values = []
-    for i in range(23):
+    military_affiliation = []
+    group = range(23)
+    for i in group:
         grouper = nasa_astronaut_dataset[nasa_astronaut_dataset.Group == i]
 
         college_list = []
@@ -433,14 +436,27 @@ def military_college_over_time(nasa_astronaut_dataset):
                 non += 1
         if (military_prep + non) > 0:
             values.append(military_prep / (military_prep + non) * 100)
-            continue
-        values.append(np.nan)
-    group = range(23)
-    plt.scatter(group, values)
-    plt.xlabel('Group Number')
-    plt.ylabel('% From Military College')
-    plt.title('Military Education in Austronauts over Time')
+        else:
+            values.append(np.nan)
+        affiliation = grad_school_vs_not_grad_school(grouper, 11)
+        if affiliation[0] + affiliation[1] > 0:
+            military_affiliation.append(affiliation[0] /
+                                        (affiliation[0] + affiliation[1])*100)
+        else:
+            military_affiliation.append(np.nan)
 
+    plt.plot(group, values, color='blue', label='Military Education')
+    plt.fill_between(group, values, color='blue')
+    plt.plot(group, military_affiliation, color='red',
+             SSlabel='Military Affiliaiton')
+    plt.fill_between(group, military_affiliation, color='red')
+    plt.xticks(np.arange(min(group), max(group)+1, 1.0))
+    plt.xlabel('Selection Groups')
+    plt.ylabel('% of Astronauts')
+    plt.title("Percentage Military Education and Military"
+              " Affiliation Over Group")
+    plt.legend(loc="upper left", prop={'size': 8.5})
+    plt.show()
 
 def top_college_over_time(nasa_astronaut_dataset):
     """
@@ -482,16 +498,16 @@ def grad_school_over_time(nasa_astronaut_dataset):
     """
 
     sixties = filter_by_year(nasa_astronaut_dataset, 1960, 1970)
-    inthesix = grad_school_vs_not_grad_school(sixties)
+    inthesix = grad_school_vs_not_grad_school(sixties, 9)
 
     seventies = filter_by_year(nasa_astronaut_dataset, 1970, 1980)
-    intheseven = grad_school_vs_not_grad_school(seventies)
+    intheseven = grad_school_vs_not_grad_school(seventies, 9)
 
     eighties = filter_by_year(nasa_astronaut_dataset, 1980, 1990)
-    intheeight = grad_school_vs_not_grad_school(eighties)
+    intheeight = grad_school_vs_not_grad_school(eighties, 9)
 
     ninties = filter_by_year(nasa_astronaut_dataset, 1990, 2014)
-    inthenine = grad_school_vs_not_grad_school(ninties)
+    inthenine = grad_school_vs_not_grad_school(ninties, 9)
 
     labels = 'Gradschool', 'Not'
 
