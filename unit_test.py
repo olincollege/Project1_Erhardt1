@@ -11,7 +11,8 @@ from functions import (
     frequency,
     tops,
     grad_school_vs_not_grad_school,
-    filter_by_year
+    filter_by_year,
+    filter_by_group
 )
 # Import the test dataset
 test_data = pandas.read_csv("Test_Data.csv")
@@ -141,5 +142,29 @@ def test_filter_by_year(dataset, year_min, year_max, passes_check, checker):
         passes_check: A bool representing the expected output of the checker.
     """
     filtered_dataset = filter_by_year(dataset, year_min, year_max)
+
+    assert filtered_dataset.shape[0] == passes_check.shape[0]
+
+@pytest.mark.parametrize("dataset, group_min, group_max, passes_check, checker", [
+    # Make sure that setting the start and end group to one year chooses
+    # only the entry for that group, test <= and >=.
+    (test_data, 19, 19, pandas.DataFrame(test_data.loc[0, :]).T, True),
+
+    # Make sure that the filter returns multiple rows when appropriate.
+    (test_data, 2024, 20204, test_2, True),
+
+    # Make sure filter doesn't include NaN groups or anything outside filter years.
+    (test_data, 2019, 2020, blank_dataset, True)
+])
+def test_filter_by_year(dataset, group_min, group_max, passes_check, checker):
+    """
+    Check that the password checker rejects one of the three common passwords
+    and accepts all others.
+
+    Args:
+        password: A string representing the password to check.
+        passes_check: A bool representing the expected output of the checker.
+    """
+    filtered_dataset = filter_by_group(dataset, group_min, group_max)
 
     assert filtered_dataset.shape[0] == passes_check.shape[0]

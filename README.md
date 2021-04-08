@@ -1,15 +1,17 @@
 # SofDes_Midterm_Erhardt1: The Right Stuff
 What is the right stuff? The right stuff is a term to represent the qualities possessed by NASA astronauts that make them deemed fit for the job. For our project, we wanted to look at how this concept of the right stuff has evolved over the past sixty years. We accomplished this through a detailed analysis of various astronaut characteristics. We focused most heavily on education, military involvement, and gender. The full report can be found in computationalessay.ipynb.
 
-*note* make a function obtain.py and put functions to obtain data in there.
+obtain.py has functions that are are used to obtain the data.
 
-functions.py has functions that can used to clean, manipulate, and visualize the data.
+functions.py has functions that are used to clean, manipulate, and visualize the data.
 
-pytests.py contains the unit tests we ran on our data.
+unit_test.py contains the unit tests we made for our data.
+
+Additionally, astronaut-yearbook.zip and astronauts.csv were files obtained by obtain.py, and Test_Data.csv contains test data for our unit tests.
 
 ## Requirements Before Running
-To run all of the functions you must have:
-1. Install the kaggle API (https://github.com/Kaggle/kaggle-api) and create an API Token. Place the file in the location ~/.kaggle/kaggle.json. This is used to obtain the data (https://www.kaggle.com/nasa/astronaut-yearbook). Important: Your Kaggle API key will be readable by other users on this system! To fix this, after getting your API key you can run 'chmod 600 /home/softdes/.kaggle/kaggle.json'
+To run all of the functions you must:
+1. Install the kaggle API (https://github.com/Kaggle/kaggle-api) and create an API Token. Place the file in the location ~/.kaggle/kaggle.json. This is used to obtain the data (https://www.kaggle.com/nasa/astronaut-yearbook). Important: Your Kaggle API key will be readable by other users on the system. To fix this, after getting your API key you can run 'chmod 600 /home/softdes/.kaggle/kaggle.json'
 2. Install the zipfile module to unzip the data.
 3. Install the matplotlib.puplot, pandas, itertools, math, and numpy modules. These are used to create the visualizations.
 
