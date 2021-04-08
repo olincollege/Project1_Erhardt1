@@ -134,15 +134,21 @@ blank_dataset = pandas.DataFrame(index=[], columns=test_data.columns)
 ])
 def test_filter_by_year(dataset, year_min, year_max, passes_check, checker):
     """
-    Check that the password checker rejects one of the three common passwords
-    and accepts all others.
+    Check to make sure filter by year behaves correctly.
 
     Args:
-        password: A string representing the password to check.
-        passes_check: A bool representing the expected output of the checker.
+        dataset: A pandas dataframe representing the test data.
+
+        year_min: An integar representing the year cutoff from below.
+
+        year_max: An integar representing the year cutoff from above.
+
+        passes_check: A pandas dataframe representing a solution data
+
+        checker: A bool representign the expected output of the checker.
     """
     filtered_dataset = filter_by_year(dataset, year_min, year_max)
-
+    checker = True
     assert filtered_dataset.shape[0] == passes_check.shape[0]
 
 @pytest.mark.parametrize("dataset, group_min, group_max, passes_check, checker", [
@@ -153,18 +159,25 @@ def test_filter_by_year(dataset, year_min, year_max, passes_check, checker):
     # Make sure that the filter returns multiple rows when appropriate.
     (test_data, 2024, 20204, test_2, True),
 
-    # Make sure filter doesn't include NaN groups or anything outside filter years.
+    # Make sure filter doesn't include NaN groups or anything
+    #outside filter years.
     (test_data, 2019, 2020, blank_dataset, True)
 ])
-def test_filter_by_year(dataset, group_min, group_max, passes_check, checker):
+def test_filter_by_group(dataset, group_min, group_max, passes_check, checker):
     """
-    Check that the password checker rejects one of the three common passwords
-    and accepts all others.
+    Check to make sure filter by group behaves correctly.
 
     Args:
-        password: A string representing the password to check.
-        passes_check: A bool representing the expected output of the checker.
+        dataset: A pandas dataframe representing the test data.
+
+        year_min: An integar representing the group cutoff from below.
+
+        year_max: An integar representing the group cutoff from above.
+
+        passes_check: A pandas dataframe representing a solution data
+
+        checker: A bool representign the expected output of the checker.
     """
     filtered_dataset = filter_by_group(dataset, group_min, group_max)
-
+    checker = True
     assert filtered_dataset.shape[0] == passes_check.shape[0]
