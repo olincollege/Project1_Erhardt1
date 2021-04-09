@@ -98,12 +98,12 @@ def test_tops(tester_data, top_number, passes_check):
     assert tops(tester_data, top_number) == passes_check
 
 
-@pytest.mark.parametrize("test_dataset, passes_check", [
+@pytest.mark.parametrize("test_dataset, column, passes_check", [
 
     # Make sure grad_school returns the right list for the test data.
-    (test_data, [3, 1]),
+    (test_data,9, [3, 1]),
 ])
-def test_grad_school_vs_not_grad_school(test_dataset, passes_check):
+def test_grad_school_vs_not_grad_school(test_dataset, column, passes_check):
     """
     Check to make sure grad_school behaves correctly.
 
@@ -112,7 +112,7 @@ def test_grad_school_vs_not_grad_school(test_dataset, passes_check):
 
         passes_check: A bool representing the expected output of the checker.
     """
-    assert grad_school_vs_not_grad_school(test_dataset) == passes_check
+    assert grad_school_vs_not_grad_school(test_dataset,column) == passes_check
 
 # Making solution dataframes
 

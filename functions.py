@@ -448,7 +448,7 @@ def military_college_over_time(nasa_astronaut_dataset):
     plt.plot(group, values, color='blue', label='Military Education')
     plt.fill_between(group, values, color='blue')
     plt.plot(group, military_affiliation, color='red',
-             SSlabel='Military Affiliaiton')
+             label='Military Affiliaiton')
     plt.fill_between(group, military_affiliation, color='red')
     plt.xticks(np.arange(min(group), max(group)+1, 1.0))
     plt.xlabel('Selection Groups')
