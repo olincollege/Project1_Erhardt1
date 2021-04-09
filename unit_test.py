@@ -18,11 +18,11 @@ from functions import (
 test_data = pandas.read_csv("Test_Data.csv")
 
 
-@pytest.mark.parametrize("testing_data, passes_check", [
+@pytest.mark.parametrize("testing_data, _passes_check", [
     # Test to Make Sure a column named "Selection Age" was made
     (test_data, True)
 ])
-def test_changed_dates(testing_data, passes_check):
+def test_changed_dates(testing_data, _passes_check):
     """
     Check that the changed_dates function adds a selection_age column.
 
@@ -110,18 +110,20 @@ def test_grad_school_vs_not_grad_school(test_dataset, column, passes_check):
     Args:
         test_dataset: A pandas dataframe representing the test data.
 
+        column: An integar representing the number collumn to count.
+
         passes_check: A bool representing the expected output of the checker.
     """
     assert grad_school_vs_not_grad_school(test_dataset,column) == passes_check
 
-# Making solution dataframes
 
+# Making solution dataframes
 
 test_2 = test_data.loc[[2, 3], :]
 blank_dataset = pandas.DataFrame(index=[], columns=test_data.columns)
 
 
-@pytest.mark.parametrize("dataset, year_min, year_max, passes_check, checker", [
+@pytest.mark.parametrize("dataset, year_min, year_max, passes_check, _checker", [
     # Make sure that setting the start and end date to one year chooses
     # only the entry for that year, test <= and >=.
     (test_data, 2004, 2004, pandas.DataFrame(test_data.loc[0, :]).T, True),
@@ -132,7 +134,7 @@ blank_dataset = pandas.DataFrame(index=[], columns=test_data.columns)
     # Make sure filter doesn't include NaN years or anything outside filter years.
     (test_data, 2019, 2020, blank_dataset, True)
 ])
-def test_filter_by_year(dataset, year_min, year_max, passes_check, checker):
+def test_filter_by_year(dataset, year_min, year_max, passes_check, _checker):
     """
     Check to make sure filter by year behaves correctly.
 
@@ -148,10 +150,9 @@ def test_filter_by_year(dataset, year_min, year_max, passes_check, checker):
         checker: A bool representign the expected output of the checker.
     """
     filtered_dataset = filter_by_year(dataset, year_min, year_max)
-    checker = True
     assert filtered_dataset.shape[0] == passes_check.shape[0]
 
-@pytest.mark.parametrize("dataset, group_min, group_max, passes_check, checker", [
+@pytest.mark.parametrize("dataset, group_min, group_max, passes_check, _checker", [
     # Make sure that setting the start and end group to one year chooses
     # only the entry for that group, test <= and >=.
     (test_data, 19, 19, pandas.DataFrame(test_data.loc[0, :]).T, True),
@@ -163,7 +164,7 @@ def test_filter_by_year(dataset, year_min, year_max, passes_check, checker):
     #outside filter years.
     (test_data, 2019, 2020, blank_dataset, True)
 ])
-def test_filter_by_group(dataset, group_min, group_max, passes_check, checker):
+def test_filter_by_group(dataset, group_min, group_max, passes_check, _checker):
     """
     Check to make sure filter by group behaves correctly.
 
@@ -179,5 +180,4 @@ def test_filter_by_group(dataset, group_min, group_max, passes_check, checker):
         checker: A bool representign the expected output of the checker.
     """
     filtered_dataset = filter_by_group(dataset, group_min, group_max)
-    checker = True
     assert filtered_dataset.shape[0] == passes_check.shape[0]

@@ -230,6 +230,10 @@ def grad_school_vs_not_grad_school(nasa_astronaut_dataset, column):
     Returns how many people in the nasa astronaut dataset went
     to graduate school and how many people did not.
 
+    Note that the dataset assumes every row is associated with a person.
+    If there are empty rows, it will count them as not graduate school
+    tallies.
+
     Args:
         nasa_astronaut_dataset: A pandas dataframe containing information
         from the 2013 NASA Astronaut Factbook.
@@ -561,7 +565,6 @@ def gender_military(nasa_astronaut_dataset, gender, title_name):
     plt.legend(loc="upper left")
     plt.show()
 
-
 def first_v_last(nasa_astronaut_dataset):
     """
     Plots a gender and military bar graph for first and last astronaut group.
@@ -591,11 +594,9 @@ def female_and_total(nasa_astronaut_dataset):
     of females per group.
 
     Args:
-        nasa_astronaut_dataset: a pandas dataset.
+        nasa_astronaut_dataset: A pandas dataframe containing information
+        from the 2013 NASA Astrounat Factbook.
 
-    Returns:
-        A plot of astronauts selected per group alongside
-        female astronauts selected per group.
     """
     females = female_per_year(nasa_astronaut_dataset)
     total_per_year = astronauts_per_group(nasa_astronaut_dataset)
