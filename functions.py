@@ -602,7 +602,6 @@ def female_and_total(nasa_astronaut_dataset):
     group = []
     for i in range(20):
         group.append(i+1)
-    print(len(group), len(total_per_year), len(females))
     plt.plot(group, total_per_year, color='purple', label='Total Astronauts')
     plt.fill_between(group, total_per_year, color='purple')
     plt.plot(group, females, color='pink', label='Female Astronauts')
