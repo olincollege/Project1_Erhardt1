@@ -1,2 +1,4 @@
 .ipynb_checkpoints/
 __pycache__/unit_test.cpython-38-pytest-6.1.1.pyc
+__pycache__/functions.cpython-38.pyc
+__pycache__/obtain.cpython-38.pyc

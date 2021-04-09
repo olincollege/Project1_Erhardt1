@@ -149,8 +149,8 @@ def horizontal_bar(nasa_astronaut_dataset, column, title_name):
 
     axis.barh(colleges, numbers, align='center', height=.8)
     axis.invert_yaxis()  # labels read top-to-bottom
-    axis.set_xlabel('Number of Astronauts per Major')
-    axis.set_title(f'Top 25 Most Common Astronaut {title_name}')
+    axis.set_xlabel("Total Number of Astronauts")
+    axis.set_title(f"Top 25 Most Common Astronaut {title_name}")
 
     plt.show()
 
